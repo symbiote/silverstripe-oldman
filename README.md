@@ -1,5 +1,11 @@
 # Old Man
 
+[![Build Status](https://travis-ci.org/SilbinaryWolf/silverstripe-oldman.svg?branch=master)](https://travis-ci.org/SilbinaryWolf/silverstripe-oldman)
+[![Latest Stable Version](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/version.svg)](https://github.com/silbinarywolf/silverstripe-oldman/releases)
+[![Latest Unstable Version](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/v/unstable.svg)](https://packagist.org/packages/silbinarywolf/silverstripe-oldman)
+[![Total Downloads](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/downloads.svg)](https://packagist.org/packages/silbinarywolf/silverstripe-oldman)
+[![License](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/license.svg)](https://github.com/silbinarywolf/silverstripe-oldman/blob/master/LICENSE.md)
+
 A module to aid in the purging of Cloudflare caches.
 
 ![oldman-cloud](https://user-images.githubusercontent.com/3859574/31596225-d2213356-b28c-11e7-97c3-e73500083c34.png)
@@ -7,7 +13,7 @@ A module to aid in the purging of Cloudflare caches.
 ## Composer Install
 
 ```
-composer require silbinarywolf/silverstripe-oldman:~1.0.0
+composer require silbinarywolf/silverstripe-oldman:~1.0
 ```
 
 ## Requirements

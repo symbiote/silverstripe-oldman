@@ -17,27 +17,30 @@ matrix:
       env:
         - DB=MYSQL
         - CORE_RELEASE=3.1
-    - php: 5.4
-      env:
-        - DB=PGSQL
-        - CORE_RELEASE=3.2
     - php: 5.5
       env:
         - DB=MYSQL
-        - CORE_RELEASE=3.3
+        - CORE_RELEASE=3.2
     - php: 5.6
       env:
         - DB=MYSQL
         - PHPCS_TEST=1
+        - CORE_RELEASE=3.3
+    - php: 7.0
+      env:
+        - DB=MYSQL
+        - PHPSTAN_TEST=1
         - CORE_RELEASE=3
 
 before_script:
   - composer self-update || true
   - phpenv rehash
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
-  - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
+  - if [[ -z $PHPSTAN_TEST ]]; then php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss; fi
+  - if [[ $PHPSTAN_TEST ]]; then php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss --require phpstan/phpstan-shim:0.8.4,silbinarywolf/silverstripe-phpstan:dev-master; fi
   - cd ~/builds/ss
 
 script:
-  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs oldman/src/ oldman/tests/ -n; fi
+  - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs --standard=PSR2 oldman/src/ oldman/tests/ -n; fi
+  - if [[ $PHPSTAN_TEST ]]; then vendor/bin/phpstan.phar analyse oldman/src -c "oldman/phpstan.neon" -a "vendor/silbinarywolf/silverstripe-phpstan/bootstrap.php" --level 3; fi
   - vendor/bin/phpunit oldman/tests/

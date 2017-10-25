@@ -81,12 +81,12 @@ class Cloudflare extends \Object
     );
 
     /**
-     * @var Cloudflare\Api
+     * @var \Cloudflare\Api
      */
     protected $client;
 
     /**
-     * @var Symbiote\Cloudflare\Filesystem
+     * @var Filesystem
      */
     protected $filesystem;
 
@@ -100,7 +100,7 @@ class Cloudflare extends \Object
     }
 
     /**
-     * @return CloudflareResult
+     * @return CloudflareResult|null
      */
     public function purgePage(\SiteTree $page)
     {
@@ -126,15 +126,12 @@ class Cloudflare extends \Object
 
         $cache = new \Cloudflare\Zone\Cache($this->client);
         $response = $cache->purge_files($this->getZoneIdentifier(), $files);
-        if (!$response->success) {
-            throw new CloudflareException($response->errors);
-        }
         $result = new CloudflareResult($files, $response->errors);
         return $result;
     }
 
     /**
-     * @return CloudflareResult
+     * @return CloudflareResult|null
      */
     public function purgeAll()
     {
@@ -149,7 +146,7 @@ class Cloudflare extends \Object
     }
 
     /**
-     * @return CloudflareResult
+     * @return CloudflareResult|null
      */
     public function purgeImages()
     {
@@ -168,7 +165,7 @@ class Cloudflare extends \Object
     }
 
     /**
-     * @return CloudflareResult
+     * @return CloudflareResult|null
      */
     public function purgeCSSAndJavascript()
     {
@@ -191,7 +188,7 @@ class Cloudflare extends \Object
         // Get base URL (for conversion of relative URL to absolute URL)
         $baseURL = $this->config()->base_url;
         if (!$baseURL) {
-            $baseURL = \Director::absoluteURL();
+            $baseURL = \Director::absoluteBaseURL();
         }
 
         // Process list of relative/absolute URLs
@@ -224,7 +221,7 @@ class Cloudflare extends \Object
     }
 
     /**
-     * @return CloudflareResult
+     * @return CloudflareResult|null
      */
     protected function purgeFilesByExtensions(array $fileExtensions)
     {
@@ -278,7 +275,7 @@ class Cloudflare extends \Object
      */
     protected function isHomePage(\SiteTree $page)
     {
-        return (!$page->Parent()->exists() || $page->Parent() instanceof \Site) &&
-                $page->URLSegment === 'home';
+        $parent = $page->Parent();
+        return $page->URLSegment === 'home' && ((class_exists('Site') && $parent instanceof \Site) || !$parent->exists());
     }
 }
