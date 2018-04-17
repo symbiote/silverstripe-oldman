@@ -26,10 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Symbiote\\Cloudflare\\": [
-                "src/",
-                "src/Tasks/"
-            ],
+            "Symbiote\\Cloudflare\\": "src/",
             "Symbiote\\Cloudflare\\Tests\\": "tests/"
         }
     },
