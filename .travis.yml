@@ -29,7 +29,7 @@ matrix:
     - php: 7.0
       env:
         - DB=MYSQL
-        - PHPSTAN_TEST=1
+        #- PHPSTAN_TEST=1
         - CORE_RELEASE=3
 
 before_script:
