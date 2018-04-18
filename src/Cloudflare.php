@@ -46,14 +46,13 @@ class Cloudflare extends Object
 
     /**
      * @var boolean
+     * @config
      */
     private static $enabled = false;
 
     /**
-     * Email
-     * eg. silverstripe@gmail.com
-     *
      * @var string
+     * @config
      */
     private static $email = '';
 
@@ -62,7 +61,8 @@ class Cloudflare extends Object
      *
      * eg. 24ca61e15fb2aa62a31212a90f2674f3451f8
      *
-     * @var string
+     * @var    string
+     * @config
      */
     private static $auth_key = '';
 
@@ -71,7 +71,8 @@ class Cloudflare extends Object
      *
      * eg. 73a40b2c0c10f468cb658f67b9d46fff
      *
-     * @var string
+     * @var    string
+     * @config
      */
     private static $zone_id = '';
 
@@ -83,31 +84,15 @@ class Cloudflare extends Object
      *
      * TODO(Jake): Perhaps change this to a array/list for Multisite support?
      *
+     * @var    string
      * @config
-     * @var string
      */
     private static $base_url = '';
-
-    /**
-     * TODO(Jake): Not implemented yet as not necessary.
-     *
-     * The directories to scan recursively for CSS/JS. If empty array, defaults to:
-     * - array('%BASE_FOLDER%')
-     *
-     * It's recommended that if you only use CSS/JS/Images from your theme folder that you
-     * configure this in YML to:
-     * - '%BASE_FOLDER%/themes'
-     *
-     * @config
-     * @var string
-     */
-    //private static $scan_directories = array();
 
     /**
      * Files with these extensions to purge when clearing images.
      * The other file extensions are read from File::app_categories['image'].
      *
-     * @config
      * @var array
      */
     private static $image_file_extensions = array(
@@ -315,9 +300,11 @@ class Cloudflare extends Object
         foreach ($fileExtensions as $fileExtension) {
             $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
         }
-        $fileRecordList = File::get()->filter(array(
+        $fileRecordList = File::get()->filter(
+            array(
             'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
-        ));
+            )
+        );
         $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
         return $files;
     }

@@ -32,17 +32,21 @@ class CloudflareTest extends \FunctionalTest
     public function testPurgeCSSAndJS()
     {
         // Generate combined files
-        Requirements::combine_files('combined.min.css', array(
+        Requirements::combine_files(
+            'combined.min.css', array(
             self::ASSETS_DIR_RELATIVE.'/test_combined_css_a.css',
             self::ASSETS_DIR_RELATIVE.'/test_combined_css_b.css',
-        ));
+            )
+        );
         Requirements::process_combined_files();
 
-        $files = $this->getFilesToPurgeByExtensions(array(
+        $files = $this->getFilesToPurgeByExtensions(
+            array(
             'css',
             //'js',
             //'json',
-        ));
+            )
+        );
         $this->assertNull(1, print_r($files, true));
         var_dump($files); exit;
     }

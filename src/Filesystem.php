@@ -104,8 +104,9 @@ class Filesystem
                 //  Skip all files/directories with:
                 //      - (Disabled) A starting '.'
                 //      - (Disabled) A starting '_'
-                if (isset($filename[0]) &&
-                    isset($ignored_filename_lookup[$filename])) {
+                if (isset($filename[0]) 
+                    && isset($ignored_filename_lookup[$filename])
+                ) {
                     continue;
                 }
 
