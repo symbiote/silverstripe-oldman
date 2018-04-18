@@ -296,7 +296,7 @@ class Cloudflare extends Object
         }
 
         // Get all files in database and purge (not using local scan for /assets/ so we can support remotely hosted files in S3/etc)
-        if ($ignoreDatabaseRecords) {
+        if (!$ignoreDatabaseRecords) {
             $fileExtensionsPrefixedWithDot = array();
             foreach ($fileExtensions as $fileExtension) {
                 $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
