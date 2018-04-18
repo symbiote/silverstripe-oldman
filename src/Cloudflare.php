@@ -2,7 +2,18 @@
 
 namespace Symbiote\Cloudflare;
 
-class Cloudflare extends \Object
+use Object;
+use Controller;
+use Director;
+use File;
+use Injector;
+use SiteTree;
+use Site;
+use Requirements;
+use Cloudflare\Api;
+use Cloudflare\Zone\Cache;
+
+class Cloudflare extends Object
 {
     /**
      * Cloudflare can only purge 500 files per request.
@@ -94,15 +105,15 @@ class Cloudflare extends \Object
     {
         parent::__construct();
         if ($this->config()->enabled) {
-            $this->client = new \Cloudflare\Api($this->config()->email, $this->config()->auth_key);
-            $this->filesystem = \Injector::inst()->get('Symbiote\Cloudflare\Filesystem');
+            $this->client = new Api($this->config()->email, $this->config()->auth_key);
+            $this->filesystem = Injector::inst()->get(Filesystem::class);
         }
     }
 
     /**
      * @return CloudflareResult|null
      */
-    public function purgePage(\SiteTree $page)
+    public function purgePage(SiteTree $page)
     {
         if (!$this->client) {
             return null;
@@ -113,7 +124,7 @@ class Cloudflare extends \Object
         $baseURL = $this->config()->base_url;
         $pageLink = '';
         if ($baseURL) {
-            $pageLink = \Controller::join_links($baseURL, $page->Link());
+            $pageLink = Controller::join_links($baseURL, $page->Link());
         } else {
             $pageLink = $page->AbsoluteLink();
         }
@@ -124,7 +135,7 @@ class Cloudflare extends \Object
             $files[] = substr($pageLink, 0, (strrpos($pageLink, '/home')));
         }
 
-        $cache = new \Cloudflare\Zone\Cache($this->client);
+        $cache = new Cache($this->client);
         $response = $cache->purge_files($this->getZoneIdentifier(), $files);
         $result = new CloudflareResult($files, $response->errors);
         return $result;
@@ -138,7 +149,7 @@ class Cloudflare extends \Object
         if (!$this->client) {
             return null;
         }
-        $cache = new \Cloudflare\Zone\Cache($this->client);
+        $cache = new Cache($this->client);
         $response = $cache->purge($this->getZoneIdentifier(), true);
 
         $result = new CloudflareResult(array(), $response->errors);
@@ -150,7 +161,7 @@ class Cloudflare extends \Object
      */
     public function purgeImages()
     {
-        $appCategories = \File::config()->app_categories;
+        $appCategories = File::config()->app_categories;
         if (!isset($appCategories['image'])) {
             user_error('Missing "image" category on File::app_categories.', E_USER_WARNING);
             return null;
@@ -188,7 +199,7 @@ class Cloudflare extends \Object
         // Get base URL (for conversion of relative URL to absolute URL)
         $baseURL = $this->config()->base_url;
         if (!$baseURL) {
-            $baseURL = \Director::absoluteBaseURL();
+            $baseURL = Director::absoluteBaseURL();
         }
 
         // Process list of relative/absolute URLs
@@ -199,13 +210,13 @@ class Cloudflare extends \Object
 
             // Convert to absolute URL
             if (!$isAbsoluteURL) {
-                $urlsToPurge[] = \Controller::join_links($baseURL, $absoluteOrRelativeURL);
+                $urlsToPurge[] = Controller::join_links($baseURL, $absoluteOrRelativeURL);
                 continue;
             }
             $urlsToPurge[] = $absoluteOrRelativeURL;
         }
 
-        $cache = new \Cloudflare\Zone\Cache($this->client);
+        $cache = new Cache($this->client);
         $response = $cache->purge_files($this->getZoneIdentifier(), $urlsToPurge);
 
         $result = new CloudflareResult($urlsToPurge, $response->errors);
@@ -228,32 +239,11 @@ class Cloudflare extends \Object
         if (!$this->client) {
             return null;
         }
-        $cache = new \Cloudflare\Zone\Cache($this->client);
-        $zoneIdentifier = $this->getZoneIdentifier();
-
-        // Scan files in the project directory to purge
-        $folderList = array(
-            // Get all files built by `Requirements` system (*.css, *.js)
-            \Director::baseFolder().'/'.\Requirements::backend()->getCombinedFilesFolder(),
-            // Get all module / theme files
-            \Director::baseFolder()
-        );
-        $files = array();
-        foreach ($folderList as $folder) {
-            $files = array_merge($files, $this->filesystem->getFilesWithExtensionsRecursively($folder, $fileExtensions));
-        }
-
-        // Get all files in database and purge (not using local scan for /assets/ so we can support remotely hosted files in S3/etc)
-        $fileExtensionsPrefixedWithDot = array();
-        foreach ($fileExtensions as $fileExtension) {
-            $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
-        }
-        $fileRecordList = \File::get()->filter(array(
-            'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
-        ));
-        $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
+        $files = $this->getFilesToPurgeByExtensions($fileExtensions);
 
         // Purge files
+        $cache = new \Cloudflare\Zone\Cache($this->client);
+        $zoneIdentifier = $this->getZoneIdentifier();
         $errors = array();
         foreach (array_chunk($files, self::MAX_PURGE_FILES_PER_REQUEST) as $filesChunk) {
             $response = $cache->purge_files($zoneIdentifier, $filesChunk);
@@ -269,13 +259,42 @@ class Cloudflare extends \Object
 
     /**
      * Check if page is the home page.
-     * Supports Multisites. (ie. \Site record exists at top of tree)
+     * Supports Multisites. (ie. "Site" record exists at top of tree)
      *
      * @return boolean
      */
-    protected function isHomePage(\SiteTree $page)
+    protected function isHomePage(SiteTree $page)
     {
         $parent = $page->Parent();
-        return $page->URLSegment === 'home' && ((class_exists('Site') && $parent instanceof \Site) || !$parent->exists());
+        return $page->URLSegment === 'home' && ((class_exists(Site::class) && $parent instanceof Site) || !$parent->exists());
+    }
+
+    /**
+     * @return array
+     */
+    private function getFilesToPurgeByExtensions(array $fileExtensions)
+    {
+        // Scan files in the project directory to purge
+        $folderList = array(
+            // Get all files built by `Requirements` system (*.css, *.js)
+            Director::baseFolder().'/'.Requirements::backend()->getCombinedFilesFolder(),
+            // Get all module / theme files
+            Director::baseFolder()
+        );
+        $files = array();
+        foreach ($folderList as $folder) {
+            $files = array_merge($files, $this->filesystem->getFilesWithExtensionsRecursively($folder, $fileExtensions));
+        }
+
+        // Get all files in database and purge (not using local scan for /assets/ so we can support remotely hosted files in S3/etc)
+        $fileExtensionsPrefixedWithDot = array();
+        foreach ($fileExtensions as $fileExtension) {
+            $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
+        }
+        $fileRecordList = File::get()->filter(array(
+            'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
+        ));
+        $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
+        return $files;
     }
 }

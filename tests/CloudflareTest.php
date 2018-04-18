@@ -2,6 +2,10 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
+use SiteTree;
+use Injector;
+use Symbiote\Cloudflare\Cloudflare;
+
 class CloudflareTest extends \FunctionalTest
 {
     protected static $disable_themes = true;
@@ -11,9 +15,9 @@ class CloudflareTest extends \FunctionalTest
      */
     public function testPurgePageFailure()
     {
-        $page = new \SiteTree();
+        $page = new SiteTree();
 
-        $result = \Injector::inst()->get('Symbiote\Cloudflare\Cloudflare')->purgePage($page);
+        $result = Injector::inst()->get(Cloudflare::class)->purgePage($page);
         // Expects `null` when not configured.
         $this->assertNull($result);
     }

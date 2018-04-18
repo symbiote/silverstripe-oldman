@@ -2,15 +2,18 @@
 
 namespace Symbiote\Cloudflare;
 
-class SiteTreeExtension extends \DataExtension
+use Injector;
+use DataExtension;
+
+class SiteTreeExtension extends DataExtension
 {
     public function onAfterPublish()
     {
-        \Injector::inst()->get('Symbiote\Cloudflare\Cloudflare')->purgePage($this->owner);
+        Injector::inst()->get(Cloudflare::class)->purgePage($this->owner);
     }
 
     public function onAfterUnpublish()
     {
-        \Injector::inst()->get('Symbiote\Cloudflare\Cloudflare')->purgePage($this->owner);
+        Injector::inst()->get(Cloudflare::class)->purgePage($this->owner);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Symbiote\Cloudflare;
 
+use Director;
+use Config;
+
 class Filesystem
 {
     /**
@@ -46,13 +49,13 @@ class Filesystem
     public function getFilesWithExtensionsRecursively($directory, array $extensionsToMatch)
     {
         $directory_stack = array($directory);
-        $ignored_filename_list = \Config::inst()->get(__CLASS__, 'blacklist_filenames');
-        $ignored_pathname_list = \Config::inst()->get(__CLASS__, 'blacklist_absolute_pathnames');
+        $ignored_filename_list = Config::inst()->get(__CLASS__, 'blacklist_filenames');
+        $ignored_pathname_list = Config::inst()->get(__CLASS__, 'blacklist_absolute_pathnames');
 
-        $base_folder = \Director::baseFolder();
-        $base_url = \Config::inst()->get('Symbiote\Cloudflare\Cloudflare', 'base_url');
+        $base_folder = Director::baseFolder();
+        $base_url = Config::inst()->get(Cloudflare::class, 'base_url');
         if (!$base_url) {
-            $base_url = \Director::absoluteURL('/');
+            $base_url = Director::absoluteURL('/');
         }
         $base_url = rtrim($base_url, '/');
 
