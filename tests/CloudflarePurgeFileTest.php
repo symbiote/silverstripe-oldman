@@ -9,26 +9,15 @@ use Requirements;
 use FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 
-class CloudflareTest extends FunctionalTest
+class CloudflarePurgeFileTest extends FunctionalTest
 {
     const ASSETS_DIR_RELATIVE = 'oldman/tests/assets';
 
     protected static $disable_themes = true;
 
     /**
-     * Effectively a test stub.
-     */
-    /*public function testPurgePageFailure()
-    {
-        $page = new SiteTree();
-
-        $result = Injector::inst()->get(Cloudflare::CloudflareClass)->purgePage($page);
-        // Expects `null` when not configured.
-        $this->assertNull($result);
-    }*/
-
-    /**
-     * Effectively a test stub.
+     * This tests if we get the correct files from a project when
+     * purging CSS and JS.
      */
     public function testPurgeCSSAndJS()
     {
@@ -68,7 +57,7 @@ class CloudflareTest extends FunctionalTest
             'http://localhost:8000/themes/simple/css/typography.css',
             'http://localhost:8000/themes/simple/javascript/script.js',
         );
-        $this->assertEquals($files, $expectedFiles, "Expected file list:\n"print_r($files, true)."Instead got:\n".print_r($expectedFiles, true));
+        $this->assertEquals($files, $expectedFiles, "Expected file list:\n".print_r($files, true)."Instead got:\n".print_r($expectedFiles, true));
     }
 
     /**
