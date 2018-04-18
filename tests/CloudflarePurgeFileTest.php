@@ -38,7 +38,8 @@ class CloudflarePurgeFileTest extends FunctionalTest
     {
         // Generate combined files
         Requirements::combine_files(
-            'combined.min.css', array(
+            'combined.min.css',
+            array(
             self::ASSETS_DIR.'/test_combined_css_a.css',
             self::ASSETS_DIR.'/test_combined_css_b.css',
             )
@@ -63,7 +64,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
         $matchCount = 0;
         foreach ($files as $file) {
             foreach ($expectedFiles as $expectedFile) {
-                if (strpos($file, $expectedFile) !== FALSE) {
+                if (strpos($file, $expectedFile) !== false) {
                     $matchCount++;
                     break;
                 }
@@ -78,7 +79,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
         // If it has a file from the 'framework' module, fail this test as it should be ignored.
         $hasFramework = false;
         foreach ($files as $file) {
-            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== FALSE);
+            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== false);
         }
         $this->assertFalse($hasFramework, 'Expected to specifically not get the "framework" file: '.self::FRAMEWORK_CSS_FILE);
     }
@@ -86,7 +87,8 @@ class CloudflarePurgeFileTest extends FunctionalTest
     /**
      * Test if this can detect the CSS file in framework when the default blacklist is disabled.
      */
-    public function testAllowBlacklistedDirectories() {
+    public function testAllowBlacklistedDirectories()
+    {
         Config::inst()->update(Cloudflare::FilesystemClass, 'disable_default_blacklist_absolute_pathnames', true);
         $files = $this->getFilesToPurgeByExtensions(
             array(
@@ -100,7 +102,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
         // If it has a file from the 'framework' module, fail this test as it should be ignored.
         $hasFramework = false;
         foreach ($files as $file) {
-            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== FALSE);
+            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== false);
         }
         $this->assertTrue(
             $hasFramework,

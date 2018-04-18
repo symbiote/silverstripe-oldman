@@ -13,5 +13,7 @@ parameters:
         # Temporary until "class_exists" feature is added
         # See here: https://github.com/phpstan/phpstan/issues/323
         - '%Class Site not found%'
+        # No SilverStripe support yet
+        - '%Call to an undefined method SiteTree::Parent()%'
 #includes:
 #	- ../vendor/silbinarywolf/silverstripe-phpstan/extension.neon
