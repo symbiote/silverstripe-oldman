@@ -10,6 +10,8 @@ use Symbiote\Cloudflare\Cloudflare;
 
 class CloudflareTest extends \FunctionalTest
 {
+    const ASSETS_DIR_RELATIVE = 'oldman/tests/assets';
+
     protected static $disable_themes = true;
 
     /**
@@ -30,10 +32,9 @@ class CloudflareTest extends \FunctionalTest
     public function testPurgeCSSAndJS()
     {
         // Generate combined files
-        $assetsFolder = dirname(__FILE__).'/assets/';
         Requirements::combine_files('combined.min.css', array(
-            $assetsFolder.'test_combined_css_a.css',
-            $assetsFolder.'test_combined_css_b.css',
+            self::ASSETS_DIR_RELATIVE.'/test_combined_css_a.css',
+            self::ASSETS_DIR_RELATIVE.'/test_combined_css_b.css',
         ));
         Requirements::process_combined_files();
 
