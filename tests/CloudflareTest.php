@@ -17,7 +17,7 @@ class CloudflareTest extends \FunctionalTest
     {
         $page = new SiteTree();
 
-        $result = Injector::inst()->get('Symbiote\Cloudflare\Cloudflare')->purgePage($page);
+        $result = Injector::inst()->get(Cloudflare::CloudflareClass)->purgePage($page);
         // Expects `null` when not configured.
         $this->assertNull($result);
     }
