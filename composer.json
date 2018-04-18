@@ -1,7 +1,7 @@
 {
     "name": "silbinarywolf/silverstripe-oldman",
     "description": "A simple cache purging module for Silverstripe.",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe"
     ],
