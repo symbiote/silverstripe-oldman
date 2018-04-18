@@ -13,14 +13,14 @@ abstract class PurgeTask extends BuildTask
 
     public function run($request = null)
     {
-        $client = Injector::inst()->get(Cloudflare::class);
+        $client = Injector::inst()->get(Cloudflare::CloudflareClass);
         if (!$client->config()->enabled) {
             $this->log('Cloudflare is not currently enabled in YML.');
             return;
         }
 
         // If accessing via web-interface, add an "are you sure" message.
-        if (!\Director::is_cli()) {
+        if (!Director::is_cli()) {
             if ($request->getVar('purge') != true) {
                 $this->log('Append "?purge=true" to the URL to confirm execution.');
                 return;

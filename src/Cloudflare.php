@@ -21,6 +21,30 @@ class Cloudflare extends Object
     const MAX_PURGE_FILES_PER_REQUEST = 500;
 
     /**
+     * String representation of this class.
+     * NOTE: Using this as PHP 5.4 does not support `Cloudflare::class`
+     *
+     * @var string
+     */
+    const CloudflareClass = 'Symbiote\Cloudflare\Cloudflare';
+
+    /**
+     * String representation of the "Filesystem" class.
+     * NOTE: Using this as PHP 5.4 does not support `Filesystem::class`
+     *
+     * @var string
+     */
+    const FilesystemClass = 'Symbiote\Cloudflare\Filesystem';
+
+    /**
+     * String representation of a Multisite "Site" DataObject class.
+     * NOTE: Using this as PHP 5.4 does not support `Site::class`
+     *
+     * @var string
+     */
+    const SiteClass = 'Site';
+
+    /**
      * @var boolean
      */
     private static $enabled = false;
@@ -106,7 +130,7 @@ class Cloudflare extends Object
         parent::__construct();
         if ($this->config()->enabled) {
             $this->client = new Api($this->config()->email, $this->config()->auth_key);
-            $this->filesystem = Injector::inst()->get(Filesystem::class);
+            $this->filesystem = Injector::inst()->get(self::FilesystemClass);
         }
     }
 
@@ -242,7 +266,7 @@ class Cloudflare extends Object
         $files = $this->getFilesToPurgeByExtensions($fileExtensions);
 
         // Purge files
-        $cache = new \Cloudflare\Zone\Cache($this->client);
+        $cache = new Cache($this->client);
         $zoneIdentifier = $this->getZoneIdentifier();
         $errors = array();
         foreach (array_chunk($files, self::MAX_PURGE_FILES_PER_REQUEST) as $filesChunk) {
@@ -266,7 +290,7 @@ class Cloudflare extends Object
     protected function isHomePage(SiteTree $page)
     {
         $parent = $page->Parent();
-        return $page->URLSegment === 'home' && ((class_exists(Site::class) && $parent instanceof Site) || !$parent->exists());
+        return $page->URLSegment === 'home' && ((class_exists(self::SiteClass) && $parent instanceof Site) || !$parent->exists());
     }
 
     /**

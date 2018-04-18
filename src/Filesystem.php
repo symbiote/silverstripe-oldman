@@ -53,7 +53,7 @@ class Filesystem
         $ignored_pathname_list = Config::inst()->get(__CLASS__, 'blacklist_absolute_pathnames');
 
         $base_folder = Director::baseFolder();
-        $base_url = Config::inst()->get(Cloudflare::class, 'base_url');
+        $base_url = Config::inst()->get(Cloudflare::CloudflareClass, 'base_url');
         if (!$base_url) {
             $base_url = Director::absoluteURL('/');
         }

@@ -9,11 +9,11 @@ class SiteTreeExtension extends DataExtension
 {
     public function onAfterPublish()
     {
-        Injector::inst()->get(Cloudflare::class)->purgePage($this->owner);
+        Injector::inst()->get(Cloudflare::CloudflareClass)->purgePage($this->owner);
     }
 
     public function onAfterUnpublish()
     {
-        Injector::inst()->get(Cloudflare::class)->purgePage($this->owner);
+        Injector::inst()->get(Cloudflare::CloudflareClass)->purgePage($this->owner);
     }
 }
