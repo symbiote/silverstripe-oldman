@@ -6,11 +6,14 @@ use ReflectionObject;
 use SiteTree;
 use Injector;
 use Requirements;
+use FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 
-class CloudflareTest extends \FunctionalTest
+class CloudflareTest extends FunctionalTest
 {
     const ASSETS_DIR_RELATIVE = 'oldman/tests/assets';
+
+    protected $usesDatabase = true;
 
     protected static $disable_themes = true;
 
