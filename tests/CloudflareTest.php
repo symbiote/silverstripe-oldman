@@ -44,8 +44,8 @@ class CloudflareTest extends FunctionalTest
         $files = $this->getFilesToPurgeByExtensions(
             array(
             'css',
-            //'js',
-            //'json',
+            'js',
+            'json',
             )
         );
         $this->assertNull(1, print_r($files, true));

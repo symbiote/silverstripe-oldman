@@ -63,6 +63,7 @@ class Filesystem
     public function getFilesWithExtensionsRecursively($directory, array $extensionsToMatch)
     {
         $directory_stack = array($directory);
+
         $ignored_filename_list = Config::inst()->get(__CLASS__, 'blacklist_filenames');
         $ignored_pathname_list = array();
         if (!Config::inst()->get(__CLASS__, 'disable_default_blacklist_absolute_pathnames')) {
@@ -74,6 +75,7 @@ class Filesystem
         }
 
         $base_folder = Director::baseFolder();
+        $base_folder = str_replace('\\', '/', $base_folder);
         $base_url = Config::inst()->get(Cloudflare::CloudflareClass, 'base_url');
         if (!$base_url) {
             $base_url = Director::absoluteURL('/');
@@ -90,7 +92,7 @@ class Filesystem
         $ignored_pathname_lookup = array();
         if ($ignored_pathname_list) {
             foreach ($ignored_pathname_list as $ignored_pathname) {
-                $ignored_pathname = str_replace('%BASE_FOLDER%', $base_folder, $ignored_pathname);
+                $ignored_pathname = str_replace(array('%BASE_FOLDER%', '\\'), array($base_folder, '/'), $ignored_pathname);
                 $ignored_pathname_lookup[$ignored_pathname] = true;
             }
         }
@@ -99,12 +101,14 @@ class Filesystem
         $result_file_list = array();
         while ($directory_stack) {
             $current_directory = array_shift($directory_stack);
+            $current_directory = str_replace('\\', '/', $current_directory);
             $files = scandir($current_directory);
             foreach ($files as $filename) {
+                $filename = str_replace('\\', '/', $filename);
                 //  Skip all files/directories with:
                 //      - (Disabled) A starting '.'
                 //      - (Disabled) A starting '_'
-                if (isset($filename[0]) 
+                if (isset($filename[0])
                     && isset($ignored_filename_lookup[$filename])
                 ) {
                     continue;
@@ -117,7 +121,7 @@ class Filesystem
                     continue;
                 }
 
-                $pathname = $current_directory . DIRECTORY_SEPARATOR . $filename;
+                $pathname = $current_directory.'/'.$filename;
 
                 if (is_dir($pathname) === true) {
                     $directory_stack[] = $pathname;
