@@ -5,6 +5,7 @@ namespace Symbiote\Cloudflare\Tests;
 use ReflectionObject;
 use SiteTree;
 use Injector;
+use Requirements;
 use Symbiote\Cloudflare\Cloudflare;
 
 class CloudflareTest extends \FunctionalTest
@@ -28,11 +29,17 @@ class CloudflareTest extends \FunctionalTest
      */
     public function testPurgeCSSAndJS()
     {
+        $assetsFolder = dirname(__FILE__).'/assets/';
+        Requirements::combine_files('combined.min.css', array(
+            $assetsFolder.'test_combined_css_a.css',
+            $assetsFolder.'test_combined_css_b.css',
+        ));
         $files = $this->getFilesToPurgeByExtensions(array(
             'css',
-            'js',
-            'json',
+            //'js',
+            //'json',
         ));
+        $this->assertNull(1, print_r($files, true));
         var_dump($files); exit;
     }
 
@@ -47,6 +54,7 @@ class CloudflareTest extends \FunctionalTest
         $reflector = new ReflectionObject($service);
         $method = $reflector->getMethod('getFilesToPurgeByExtensions');
         $method->setAccessible(true);
-        return $method->invoke($service, $fileExtensions);
+        $results = $method->invoke($service, $fileExtensions);
+        return $results;
     }
 }
