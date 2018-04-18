@@ -61,13 +61,17 @@ class Filesystem
 
         // Convert from flat arrays to lookup for speed
         $ignored_filename_lookup = array();
-        foreach ($ignored_filename_list as $ignored_filename) {
-            $ignored_filename_lookup[$ignored_filename] = true;
+        if ($ignored_filename_list) {
+            foreach ($ignored_filename_list as $ignored_filename) {
+                $ignored_filename_lookup[$ignored_filename] = true;
+            }
         }
         $ignored_pathname_lookup = array();
-        foreach ($ignored_pathname_list as $ignored_pathname) {
-            $ignored_pathname = str_replace('%BASE_FOLDER%', $base_folder, $ignored_pathname);
-            $ignored_pathname_lookup[$ignored_pathname] = true;
+        if ($ignored_pathname_list) {
+            foreach ($ignored_pathname_list as $ignored_pathname) {
+                $ignored_pathname = str_replace('%BASE_FOLDER%', $base_folder, $ignored_pathname);
+                $ignored_pathname_lookup[$ignored_pathname] = true;
+            }
         }
 
         // Get all files
@@ -100,10 +104,14 @@ class Filesystem
                 }
                 $file_extension = pathinfo($pathname, PATHINFO_EXTENSION);
                 if (in_array($file_extension, $extensionsToMatch)) {
-                    // Convert path to URL
+                    // Two things:
+                    // - Convert path to URL
                     // ie. "/shared/httpd/{project-folder}/htdocs/betterbuttons/css/betterbuttons_nested_form.css"
                     // to: "http://{project-folder}.symlocal/betterbuttons/css/betterbuttons_nested_form.css"
-                    $pathname = str_replace($base_folder, $base_url, $pathname);
+                    //
+                    // - Replace \ with / to make file lists the same across Windows / *nix
+                    //
+                    $pathname = str_replace(array($base_folder, '\\'), array($base_url, '/'), $pathname);
 
                     $result_file_list[] = $pathname;
                 }

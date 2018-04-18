@@ -128,9 +128,9 @@ class Cloudflare extends Object
     public function __construct()
     {
         parent::__construct();
+        $this->filesystem = Injector::inst()->get(self::FilesystemClass);
         if ($this->config()->enabled) {
             $this->client = new Api($this->config()->email, $this->config()->auth_key);
-            $this->filesystem = Injector::inst()->get(self::FilesystemClass);
         }
     }
 
