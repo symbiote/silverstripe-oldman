@@ -2,8 +2,9 @@
 
 namespace Symbiote\Cloudflare;
 
-use Director;
-use Config;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Director;
+use Symbiote\Cloudflare\Cloudflare;
 
 class Filesystem
 {
