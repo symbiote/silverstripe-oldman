@@ -13,8 +13,6 @@ class CloudflareTest extends FunctionalTest
 {
     const ASSETS_DIR_RELATIVE = 'oldman/tests/assets';
 
-    protected $usesDatabase = true;
-
     protected static $disable_themes = true;
 
     /**
@@ -51,11 +49,11 @@ class CloudflareTest extends FunctionalTest
             )
         );
         $this->assertNull(1, print_r($files, true));
-        var_dump($files); exit;
+        exit('exiting here!');
     }
 
     /**
-     * Wrapper to expose private method 'getFilesToPurgeByExtensions'\
+     * Wrapper to expose private method 'getFilesToPurgeByExtensions'
      *
      * @return array
      */
@@ -65,7 +63,19 @@ class CloudflareTest extends FunctionalTest
         $reflector = new ReflectionObject($service);
         $method = $reflector->getMethod('getFilesToPurgeByExtensions');
         $method->setAccessible(true);
-        $results = $method->invoke($service, $fileExtensions);
+        // NOTE(Jake): 2018-04-18
+        //
+        // We skip "File::get()" calls with the $skipDatabaseRecords parameter.
+        // This is to make executing tests faster.
+        //
+        $skipDatabaseRecords = true;
+        $results = $method->invoke($service, $fileExtensions, $skipDatabaseRecords);
+        // NOTE(Jake): 2018-04-18
+        //
+        // Searching through a directory recursively will have files unordered.
+        // We sort in tests so that datasets are more predictable.
+        //
+        sort($results);
         return $results;
     }
 }

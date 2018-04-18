@@ -248,7 +248,7 @@ class Cloudflare extends Object
         if (!$this->client) {
             return null;
         }
-        $files = $this->getFilesToPurgeByExtensions($fileExtensions);
+        $files = $this->getFilesToPurgeByExtensions($fileExtensions, false);
 
         // Purge files
         $cache = new Cache($this->client);
@@ -281,7 +281,7 @@ class Cloudflare extends Object
     /**
      * @return array
      */
-    private function getFilesToPurgeByExtensions(array $fileExtensions)
+    private function getFilesToPurgeByExtensions(array $fileExtensions, $ignoreDatabaseRecords)
     {
         // Scan files in the project directory to purge
         $folderList = array(
@@ -296,16 +296,18 @@ class Cloudflare extends Object
         }
 
         // Get all files in database and purge (not using local scan for /assets/ so we can support remotely hosted files in S3/etc)
-        $fileExtensionsPrefixedWithDot = array();
-        foreach ($fileExtensions as $fileExtension) {
-            $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
+        if ($ignoreDatabaseRecords) {
+            $fileExtensionsPrefixedWithDot = array();
+            foreach ($fileExtensions as $fileExtension) {
+                $fileExtensionsPrefixedWithDot[] = '.'.$fileExtension;
+            }
+            $fileRecordList = File::get()->filter(
+                array(
+                'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
+                )
+            );
+            $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
         }
-        $fileRecordList = File::get()->filter(
-            array(
-            'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
-            )
-        );
-        $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
         return $files;
     }
 }
