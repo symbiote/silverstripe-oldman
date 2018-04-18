@@ -5,6 +5,7 @@ parameters:
     universalObjectCratesClasses:
         - ArrayData
         - Config_ForClass
+        - DataObject
         - AbstractQueuedJob # symbiote/silverstripe-queuedjobs module support
     excludes_analyse:
         - silverstripe-cache
