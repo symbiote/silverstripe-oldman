@@ -41,6 +41,7 @@ class CloudflareTest extends FunctionalTest
         );
         Requirements::process_combined_files();
 
+        //
         $files = $this->getFilesToPurgeByExtensions(
             array(
             'css',
@@ -48,8 +49,26 @@ class CloudflareTest extends FunctionalTest
             'json',
             )
         );
-        $this->assertNull(1, print_r($files, true));
-        exit('exiting here!');
+        // NOTE(Jake): 2018-04-18
+        //
+        // This list was literally taken from an assert below printing the files
+        // in TravisCI
+        //
+        $expectedFiles = array(
+            // Make sure we purge the _combinedfile
+            'http://localhost:8000/assets/_combinedfiles/combined.min.css',
+            'http://localhost:8000/oldman/tests/assets/test_combined_css_a.css',
+            'http://localhost:8000/oldman/tests/assets/test_combined_css_b.css',
+            'http://localhost:8000/reports/javascript/ReportAdmin.Tree.js',
+            'http://localhost:8000/reports/javascript/ReportAdmin.js',
+            'http://localhost:8000/themes/simple/css/editor.css',
+            'http://localhost:8000/themes/simple/css/form.css',
+            'http://localhost:8000/themes/simple/css/layout.css',
+            'http://localhost:8000/themes/simple/css/reset.css',
+            'http://localhost:8000/themes/simple/css/typography.css',
+            'http://localhost:8000/themes/simple/javascript/script.js',
+        );
+        $this->assertEquals($files, $expectedFiles, "Expected file list:\n"print_r($files, true)."Instead got:\n".print_r($expectedFiles, true));
     }
 
     /**
