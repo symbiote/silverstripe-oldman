@@ -6,26 +6,41 @@ use ReflectionObject;
 use SiteTree;
 use Injector;
 use Requirements;
+use Config;
 use FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
+use Symbiote\Cloudflare\Filesystem;
 
 class CloudflarePurgeFileTest extends FunctionalTest
 {
-    const ASSETS_DIR_RELATIVE = 'oldman/tests/assets';
+    /**
+     * The assets used by the tests
+     */
+    const ASSETS_DIR = 'oldman/tests/assets';
+
+    /**
+     * This is used to determine if the 'framework' folder was scanned
+     * for CSS/JS files.
+     */
+    const FRAMEWORK_CSS_FILE = 'framework/css/Security_login.css';
 
     protected static $disable_themes = true;
 
     /**
      * This tests if we get the correct files from a project when
      * purging CSS and JS.
+     *
+     * This means that CSS/JS files within "framework", "vendor" and other
+     * folders should be ignored.
+     *
      */
     public function testPurgeCSSAndJS()
     {
         // Generate combined files
         Requirements::combine_files(
             'combined.min.css', array(
-            self::ASSETS_DIR_RELATIVE.'/test_combined_css_a.css',
-            self::ASSETS_DIR_RELATIVE.'/test_combined_css_b.css',
+            self::ASSETS_DIR.'/test_combined_css_a.css',
+            self::ASSETS_DIR.'/test_combined_css_b.css',
             )
         );
         Requirements::process_combined_files();
@@ -38,26 +53,59 @@ class CloudflarePurgeFileTest extends FunctionalTest
             'json',
             )
         );
-        // NOTE(Jake): 2018-04-18
-        //
-        // This list was literally taken from an assert below printing the files
-        // in TravisCI
-        //
         $expectedFiles = array(
             // Make sure we purge the _combinedfile
-            'http://localhost:8000/assets/_combinedfiles/combined.min.css',
-            'http://localhost:8000/oldman/tests/assets/test_combined_css_a.css',
-            'http://localhost:8000/oldman/tests/assets/test_combined_css_b.css',
-            'http://localhost:8000/reports/javascript/ReportAdmin.Tree.js',
-            'http://localhost:8000/reports/javascript/ReportAdmin.js',
-            'http://localhost:8000/themes/simple/css/editor.css',
-            'http://localhost:8000/themes/simple/css/form.css',
-            'http://localhost:8000/themes/simple/css/layout.css',
-            'http://localhost:8000/themes/simple/css/reset.css',
-            'http://localhost:8000/themes/simple/css/typography.css',
-            'http://localhost:8000/themes/simple/javascript/script.js',
+            'assets/_combinedfiles/combined.min.css',
+            'oldman/tests/assets/test_combined_css_a.css',
+            'oldman/tests/assets/test_combined_css_b.css',
         );
-        $this->assertEquals($files, $expectedFiles, "Expected file list:\n".print_r($files, true)."Instead got:\n".print_r($expectedFiles, true));
+        // Search for matches
+        $matchCount = 0;
+        foreach ($files as $file) {
+            foreach ($expectedFiles as $expectedFile) {
+                if (strpos($file, $expectedFile) !== FALSE) {
+                    $matchCount++;
+                    break;
+                }
+            }
+        }
+        $this->assertEquals(
+            count($expectedFiles),
+            $matchCount,
+            "Expected file list:\n".print_r($expectedFiles, true)."Instead got:\n".print_r($files, true)
+        );
+
+        // If it has a file from the 'framework' module, fail this test as it should be ignored.
+        $hasFramework = false;
+        foreach ($files as $file) {
+            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== FALSE);
+        }
+        $this->assertFalse($hasFramework, 'Expected to specifically not get the "framework" file: '.self::FRAMEWORK_CSS_FILE);
+    }
+
+    /**
+     * Test if this can detect the CSS file in framework when the default blacklist is disabled.
+     */
+    public function testAllowBlacklistedDirectories() {
+        Config::inst()->update(Cloudflare::FilesystemClass, 'disable_default_blacklist_absolute_pathnames', true);
+        $files = $this->getFilesToPurgeByExtensions(
+            array(
+            'css',
+            'js',
+            'json',
+            )
+        );
+        Config::inst()->update(Cloudflare::FilesystemClass, 'disable_default_blacklist_absolute_pathnames', false);
+
+        // If it has a file from the 'framework' module, fail this test as it should be ignored.
+        $hasFramework = false;
+        foreach ($files as $file) {
+            $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== FALSE);
+        }
+        $this->assertTrue(
+            $hasFramework,
+            'Expected to get "framework" file: '.self::FRAMEWORK_CSS_FILE."\nInstead got:".print_r($files, true)
+        );
     }
 
     /**
@@ -65,7 +113,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
      *
      * @return array
      */
-    protected function getFilesToPurgeByExtensions(array $fileExtensions)
+    private function getFilesToPurgeByExtensions(array $fileExtensions)
     {
         $service = Injector::inst()->get(Cloudflare::CloudflareClass);
         $reflector = new ReflectionObject($service);

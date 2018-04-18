@@ -46,7 +46,7 @@ class Filesystem
      *
      * @var array
      */
-    protected static $default_blacklist_absolute_pathnames = array(
+    protected $defaultBlacklistAbsolutePathnames = array(
         '%BASE_FOLDER%/framework',
         '%BASE_FOLDER%/cms',
         '%BASE_FOLDER%/assets',
@@ -67,7 +67,7 @@ class Filesystem
         $ignored_filename_list = Config::inst()->get(__CLASS__, 'blacklist_filenames');
         $ignored_pathname_list = array();
         if (!Config::inst()->get(__CLASS__, 'disable_default_blacklist_absolute_pathnames')) {
-            $ignored_pathname_list = self::$default_blacklist_absolute_pathnames;
+            $ignored_pathname_list = $this->defaultBlacklistAbsolutePathnames;
         }
         $custom_ignored_pathname_list = Config::inst()->get(__CLASS__, 'blacklist_absolute_pathnames');
         if ($custom_ignored_pathname_list) {
