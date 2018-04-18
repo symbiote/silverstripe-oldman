@@ -127,23 +127,7 @@ class Cloudflare extends Object
         if (!$this->client) {
             return null;
         }
-        $files = array();
-
-        // Use alternate base url if defined for cache clearing
-        $baseURL = $this->config()->base_url;
-        $pageLink = '';
-        if ($baseURL) {
-            $pageLink = Controller::join_links($baseURL, $page->Link());
-        } else {
-            $pageLink = $page->AbsoluteLink();
-        }
-        $files[] = $pageLink;
-
-        // If /home/ for HomePage, also add "/" to be cleared.
-        if ($this->isHomePage($page)) {
-            $files[] = substr($pageLink, 0, (strrpos($pageLink, '/home')));
-        }
-
+        $files = $this->getLinksToPurgeByPage($page);
         $cache = new Cache($this->client);
         $response = $cache->purge_files($this->getZoneIdentifier(), $files);
         $result = new CloudflareResult($files, $response->errors);
@@ -276,6 +260,29 @@ class Cloudflare extends Object
     {
         $parent = $page->Parent();
         return $page->URLSegment === 'home' && ((class_exists(self::SITE_CLASS) && $parent instanceof Site) || !$parent->exists());
+    }
+
+    /**
+     * @return array
+     */
+    private function getLinksToPurgeByPage(SiteTree $page)
+    {
+        $files = array();
+        // Use alternate base url if defined for cache clearing
+        $baseURL = $this->config()->base_url;
+        $pageLink = '';
+        if ($baseURL) {
+            $pageLink = Controller::join_links($baseURL, $page->Link());
+        } else {
+            $pageLink = $page->AbsoluteLink();
+        }
+        $files[] = $pageLink;
+
+        // If /home/ for HomePage, also add "/" to be cleared.
+        if ($this->isHomePage($page)) {
+            $files[] = substr($pageLink, 0, (strrpos($pageLink, '/home')));
+        }
+        return $files;
     }
 
     /**
