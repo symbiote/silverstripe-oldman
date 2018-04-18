@@ -89,7 +89,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
      */
     public function testAllowBlacklistedDirectories()
     {
-        Config::inst()->update(Cloudflare::FilesystemClass, 'disable_default_blacklist_absolute_pathnames', true);
+        Config::inst()->update(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', true);
         $files = $this->getFilesToPurgeByExtensions(
             array(
             'css',
@@ -97,7 +97,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
             'json',
             )
         );
-        Config::inst()->update(Cloudflare::FilesystemClass, 'disable_default_blacklist_absolute_pathnames', false);
+        Config::inst()->update(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', false);
 
         // If it has a file from the 'framework' module, fail this test as it should be ignored.
         $hasFramework = false;
@@ -117,7 +117,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
      */
     private function getFilesToPurgeByExtensions(array $fileExtensions)
     {
-        $service = Injector::inst()->get(Cloudflare::CloudflareClass);
+        $service = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS);
         $reflector = new ReflectionObject($service);
         $method = $reflector->getMethod('getFilesToPurgeByExtensions');
         $method->setAccessible(true);

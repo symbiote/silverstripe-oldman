@@ -76,7 +76,7 @@ class Filesystem
 
         $base_folder = Director::baseFolder();
         $base_folder = str_replace('\\', '/', $base_folder);
-        $base_url = Config::inst()->get(Cloudflare::CloudflareClass, 'base_url');
+        $base_url = Config::inst()->get(Cloudflare::CLOUDFLARE_CLASS, 'base_url');
         if (!$base_url) {
             $base_url = Director::absoluteURL('/');
         }

@@ -26,7 +26,7 @@ class Cloudflare extends Object
      *
      * @var string
      */
-    const CloudflareClass = 'Symbiote\Cloudflare\Cloudflare';
+    const CLOUDFLARE_CLASS = 'Symbiote\Cloudflare\Cloudflare';
 
     /**
      * String representation of the "Filesystem" class.
@@ -34,7 +34,7 @@ class Cloudflare extends Object
      *
      * @var string
      */
-    const FilesystemClass = 'Symbiote\Cloudflare\Filesystem';
+    const FILESYSTEM_CLASS = 'Symbiote\Cloudflare\Filesystem';
 
     /**
      * String representation of a Multisite "Site" DataObject class.
@@ -42,7 +42,7 @@ class Cloudflare extends Object
      *
      * @var string
      */
-    const SiteClass = 'Site';
+    const SITE_CLASS = 'Site';
 
     /**
      * @var boolean
@@ -113,7 +113,7 @@ class Cloudflare extends Object
     public function __construct()
     {
         parent::__construct();
-        $this->filesystem = Injector::inst()->get(self::FilesystemClass);
+        $this->filesystem = Injector::inst()->get(self::FILESYSTEM_CLASS);
         if ($this->config()->enabled) {
             $this->client = new Api($this->config()->email, $this->config()->auth_key);
         }
@@ -275,7 +275,7 @@ class Cloudflare extends Object
     protected function isHomePage(SiteTree $page)
     {
         $parent = $page->Parent();
-        return $page->URLSegment === 'home' && ((class_exists(self::SiteClass) && $parent instanceof Site) || !$parent->exists());
+        return $page->URLSegment === 'home' && ((class_exists(self::SITE_CLASS) && $parent instanceof Site) || !$parent->exists());
     }
 
     /**
