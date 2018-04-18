@@ -37,10 +37,10 @@ before_script:
   - phpenv rehash
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
   - if [[ -z $PHPSTAN_TEST ]]; then php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss; fi
-  - if [[ $PHPSTAN_TEST ]]; then php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss --require phpstan/phpstan-shim:0.8.4,silbinarywolf/silverstripe-phpstan:dev-master; fi
+  - if [[ $PHPSTAN_TEST ]]; then php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss --require phpstan/phpstan-shim:0.9.2; fi
   - cd ~/builds/ss
 
 script:
   - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs --standard=PSR2 oldman/src/ oldman/tests/ -n; fi
-  - if [[ $PHPSTAN_TEST ]]; then vendor/bin/phpstan.phar analyse oldman/src -c "oldman/phpstan.neon" -a "vendor/silbinarywolf/silverstripe-phpstan/bootstrap.php" --level 3; fi
+  - if [[ $PHPSTAN_TEST ]]; then vendor/bin/phpstan.phar analyse oldman/src -c "oldman/phpstan.neon" -a "oldman/tests/bootstrap-phpstan.php" --level 3; fi
   - vendor/bin/phpunit oldman/tests/
