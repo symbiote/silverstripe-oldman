@@ -37,6 +37,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
     public function testPurgeCSSAndJS()
     {
         // Generate combined files
+        Requirements::delete_all_combined_files();
         Requirements::set_combined_files_enabled(true); // not enabled by default in SS4
         Requirements::combine_files(
             'combined.min.css',
