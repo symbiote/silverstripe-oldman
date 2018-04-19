@@ -36,6 +36,11 @@ class CloudflarePurgeFileTest extends FunctionalTest
      */
     public function testPurgeCSSAndJS()
     {
+        // Create files
+        @mkdir(self::ASSETS_DIR);
+        file_put_contents(self::ASSETS_DIR.'/test_combined_css_a.css', '.selector_a { width: 100%; }');
+        file_put_contents(self::ASSETS_DIR.'/test_combined_css_b.css', '.selector_b { width: 100%; }');
+
         // Generate combined files
         Requirements::delete_all_combined_files();
         Requirements::set_combined_files_enabled(true); // not enabled by default in SS4
@@ -91,6 +96,9 @@ class CloudflarePurgeFileTest extends FunctionalTest
             $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== false);
         }
         $this->assertFalse($hasFramework, 'Expected to specifically not get the "framework" file: '.self::FRAMEWORK_CSS_FILE);
+
+        // Cleanup
+        //@rmdir(self::ASSETS_DIR);
     }
 
     /**
