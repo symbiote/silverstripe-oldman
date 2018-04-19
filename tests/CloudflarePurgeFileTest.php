@@ -16,7 +16,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
     /**
      * The assets used by the tests
      */
-    const ASSETS_DIR = 'vendor/silbinarywolf/silverstripe-oldman/tests/assets';
+    const ASSETS_DIR = BASE_PATH.'/vendor/silbinarywolf/silverstripe-oldman/tests/assets';
 
     /**
      * This is used to determine if the 'framework' folder was scanned
