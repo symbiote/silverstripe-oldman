@@ -118,7 +118,6 @@ class Cloudflare
 
     public function __construct()
     {
-        parent::__construct();
         $this->filesystem = Injector::inst()->get(self::FILESYSTEM_CLASS);
         if ($this->config()->enabled) {
             $this->client = new Api($this->config()->email, $this->config()->auth_key);
