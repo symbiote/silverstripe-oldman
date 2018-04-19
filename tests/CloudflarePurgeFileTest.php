@@ -3,11 +3,11 @@
 namespace Symbiote\Cloudflare\Tests;
 
 use ReflectionObject;
-use SiteTree;
-use Injector;
-use Requirements;
-use Config;
-use FunctionalTest;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\View\Requirements;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 use Symbiote\Cloudflare\Filesystem;
 
