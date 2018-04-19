@@ -16,13 +16,13 @@ class CloudflarePurgeFileTest extends FunctionalTest
     /**
      * The assets used by the tests
      */
-    const ASSETS_DIR = BASE_PATH.'/vendor/silbinarywolf/silverstripe-oldman/tests/assets';
+    const ASSETS_DIR = 'vendor/silbinarywolf/silverstripe-oldman/tests/assets';
 
     /**
      * This is used to determine if the 'framework' folder was scanned
      * for CSS/JS files.
      */
-    const FRAMEWORK_CSS_FILE = 'framework/css/Security_login.css';
+    const FRAMEWORK_CSS_FILE = 'vendor/silverstripe/framework/src/Dev/Install/client/styles/install.css';
 
     protected static $disable_themes = true;
 
@@ -56,10 +56,17 @@ class CloudflarePurgeFileTest extends FunctionalTest
             )
         );
         $expectedFiles = array(
-            // Make sure we purge the _combinedfile
-            'assets/_combinedfiles/combined.min.css',
-            'oldman/tests/assets/test_combined_css_a.css',
-            'oldman/tests/assets/test_combined_css_b.css',
+            // NOTE(Jake): 2018-04-19
+            //
+            // In SS4, combined files have a partial-hash
+            // ie. assets/_combinedfiles/combined.min-1a933ce.css
+            //
+            // So we only partially match the name.
+            //
+            ASSETS_DIR.'/_combinedfiles/combined.min-',
+            // NOTE(Jake): 2018-04-19, Moved under "vendor" in SS4.
+            //'oldman/tests/assets/test_combined_css_a.css',
+            //'oldman/tests/assets/test_combined_css_b.css',
         );
         // Search for matches
         $matchCount = 0;

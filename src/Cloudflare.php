@@ -298,7 +298,7 @@ class Cloudflare
         // Scan files in the project directory to purge
         $folderList = array(
             // Get all files built by `Requirements` system (*.css, *.js)
-            Director::baseFolder().'/'.Requirements::backend()->getCombinedFilesFolder(),
+            Director::baseFolder().'/'.ASSETS_DIR.'/'.Requirements::backend()->getCombinedFilesFolder(),
             // Get all module / theme files
             Director::baseFolder()
         );
