@@ -12,13 +12,21 @@
 
     <!-- Use PSR-2 as a base standard -->
     <rule ref="PSR2">
-        <!-- Allow classes to not declare a namespace -->
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <!-- Current exclusions -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName" />
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+        <exclude name="PSR2.Classes.PropertyDeclaration" />
+        <exclude name="PSR2.ControlStructures.SwitchDeclaration" /> <!-- causes php notice while linting -->
+        <exclude name="PSR2.ControlStructures.SwitchDeclaration.WrongOpenercase" />
+        <exclude name="PSR2.ControlStructures.SwitchDeclaration.WrongOpenerdefault" />
+        <exclude name="PSR2.ControlStructures.SwitchDeclaration.TerminatingComment" />
+        <exclude name="PSR2.Methods.MethodDeclaration.Underscore" />
+        <exclude name="Squiz.Scope.MethodScope" />
+        <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps" />
+        <exclude name="Generic.Files.LineLength.TooLong" />
+        <exclude name="PEAR.Functions.ValidDefaultValue.NotAtEnd" />
 
-        <!-- Allow underscores in class names -->
-        <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps"/>
-
-        <!-- Allow non camel cased method names -->
-        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
+        <!-- SilverStripe 3 only - Allow classes to not declare a namespace -->
+        <!-- <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/> -->
     </rule>
 </ruleset>
