@@ -32,7 +32,6 @@ class CloudflarePurgeFileTest extends FunctionalTest
      *
      * This means that CSS/JS files within "framework", "vendor" and other
      * folders should be ignored.
-     *
      */
     public function testPurgeCSSAndJS()
     {
