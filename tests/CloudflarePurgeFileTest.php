@@ -37,7 +37,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
     public function testPurgeCSSAndJS()
     {
         // Create files
-        @mkdir(self::ASSETS_DIR);
+        @mkdir(self::ASSETS_DIR, 0777, true);
         file_put_contents(self::ASSETS_DIR.'/test_combined_css_a.css', '.selector_a { width: 100%; }');
         file_put_contents(self::ASSETS_DIR.'/test_combined_css_b.css', '.selector_b { width: 100%; }');
 
