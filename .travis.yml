@@ -11,6 +11,11 @@ env:
   matrix:
     - DB=MYSQL CORE_RELEASE=4
 
+## Cache composer bits
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 matrix:
   include:
     - php: 5.6
