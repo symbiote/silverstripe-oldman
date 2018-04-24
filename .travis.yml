@@ -36,5 +36,5 @@ before_script:
 
 script:
   - if [[ $PHPCS_TEST ]]; then vendor/bin/phpcs --standard=PSR2 oldman/src/ oldman/tests/ -n; fi
-  - if [[ $PHPSTAN_TEST ]]; then vendor/bin/phpstan.phar analyse oldman/src -c "oldman/phpstan.neon" -a "oldman/tests/bootstrap-phpstan.php" --level 3; fi
+  - if [[ $PHPSTAN_TEST ]]; then vendor/bin/phpstan analyse oldman/src -c "oldman/phpstan.neon" -a "oldman/tests/bootstrap-phpstan.php" --level 3; fi
   - vendor/bin/phpunit
