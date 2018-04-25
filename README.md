@@ -18,6 +18,7 @@ composer require silbinarywolf/silverstripe-oldman:~1.0
 
 ## Requirements
 
+* PHP 5.4+
 * SilverStripe 3.2+
 
 ## Documentation
