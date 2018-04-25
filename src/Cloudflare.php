@@ -2,19 +2,25 @@
 
 namespace Symbiote\Cloudflare;
 
-use Object;
-use Controller;
-use Director;
-use File;
-use Injector;
-use SiteTree;
-use Site;
-use Requirements;
+use Symbiote\Multisites\Model\Site;
 use Cloudflare\Api;
 use Cloudflare\Zone\Cache;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Assets\File;
+use SilverStripe\Control\Director;
+use SilverStripe\Control\Controller;
+use SilverStripe\View\Requirements;
+use SilverStripe\Core\Extensible;
+use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Config\Configurable;
 
-class Cloudflare extends Object
+class Cloudflare
 {
+    use Extensible;
+    use Injectable;
+    use Configurable;
+
     /**
      * Cloudflare can only purge 500 files per request.
      */
@@ -112,7 +118,6 @@ class Cloudflare extends Object
 
     public function __construct()
     {
-        parent::__construct();
         $this->filesystem = Injector::inst()->get(self::FILESYSTEM_CLASS);
         if ($this->config()->enabled) {
             $this->client = new Api($this->config()->email, $this->config()->auth_key);
@@ -293,7 +298,7 @@ class Cloudflare extends Object
         // Scan files in the project directory to purge
         $folderList = array(
             // Get all files built by `Requirements` system (*.css, *.js)
-            Director::baseFolder().'/'.Requirements::backend()->getCombinedFilesFolder(),
+            Director::baseFolder().'/'.ASSETS_DIR.'/'.Requirements::backend()->getCombinedFilesFolder(),
             // Get all module / theme files
             Director::baseFolder()
         );

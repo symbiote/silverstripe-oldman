@@ -2,8 +2,8 @@
 
 namespace Symbiote\Cloudflare;
 
-use Injector;
-use DataExtension;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DataExtension;
 
 class SiteTreeExtension extends DataExtension
 {

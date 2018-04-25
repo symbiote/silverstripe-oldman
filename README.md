@@ -12,8 +12,14 @@ A module to aid in the purging of Cloudflare caches.
 
 ## Composer Install
 
+**[SilverStripe 3.X](https://github.com/silbinarywolf/silverstripe-oldman/tree/1)**
 ```
 composer require silbinarywolf/silverstripe-oldman:~1.0
+```
+
+**[SilverStripe 4.X](https://github.com/silbinarywolf/silverstripe-oldman/tree/master)**
+```
+composer require silbinarywolf/silverstripe-oldman:~2.0
 ```
 
 ## Requirements

@@ -3,11 +3,11 @@
 namespace Symbiote\Cloudflare\Tests;
 
 use ReflectionObject;
-use SiteTree;
-use Injector;
-use Requirements;
-use Config;
-use FunctionalTest;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\View\Requirements;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 use Symbiote\Cloudflare\Filesystem;
 
@@ -16,13 +16,13 @@ class CloudflarePurgeFileTest extends FunctionalTest
     /**
      * The assets used by the tests
      */
-    const ASSETS_DIR = 'oldman/tests/assets';
+    const ASSETS_DIR = 'vendor/silbinarywolf/silverstripe-oldman/tests/assets';
 
     /**
      * This is used to determine if the 'framework' folder was scanned
      * for CSS/JS files.
      */
-    const FRAMEWORK_CSS_FILE = 'framework/css/Security_login.css';
+    const FRAMEWORK_CSS_FILE = 'vendor/silverstripe/framework/src/Dev/Install/client/styles/install.css';
 
     protected static $disable_themes = true;
 
@@ -32,11 +32,17 @@ class CloudflarePurgeFileTest extends FunctionalTest
      *
      * This means that CSS/JS files within "framework", "vendor" and other
      * folders should be ignored.
-     *
      */
     public function testPurgeCSSAndJS()
     {
+        // Create files
+        @mkdir(self::ASSETS_DIR, 0777, true);
+        file_put_contents(self::ASSETS_DIR.'/test_combined_css_a.css', '.selector_a { width: 100%; }');
+        file_put_contents(self::ASSETS_DIR.'/test_combined_css_b.css', '.selector_b { width: 100%; }');
+
         // Generate combined files
+        Requirements::delete_all_combined_files();
+        Requirements::set_combined_files_enabled(true); // not enabled by default in SS4
         Requirements::combine_files(
             'combined.min.css',
             array(
@@ -55,10 +61,17 @@ class CloudflarePurgeFileTest extends FunctionalTest
             )
         );
         $expectedFiles = array(
-            // Make sure we purge the _combinedfile
-            'assets/_combinedfiles/combined.min.css',
-            'oldman/tests/assets/test_combined_css_a.css',
-            'oldman/tests/assets/test_combined_css_b.css',
+            // NOTE(Jake): 2018-04-19
+            //
+            // In SS4, combined files have a partial-hash
+            // ie. assets/_combinedfiles/combined.min-1a933ce.css
+            //
+            // So we only partially match the name.
+            //
+            ASSETS_DIR.'/_combinedfiles/combined.min-',
+            // NOTE(Jake): 2018-04-19, Moved under "vendor" in SS4.
+            //'oldman/tests/assets/test_combined_css_a.css',
+            //'oldman/tests/assets/test_combined_css_b.css',
         );
         // Search for matches
         $matchCount = 0;
@@ -82,6 +95,9 @@ class CloudflarePurgeFileTest extends FunctionalTest
             $hasFramework = $hasFramework || (strpos($file, self::FRAMEWORK_CSS_FILE) !== false);
         }
         $this->assertFalse($hasFramework, 'Expected to specifically not get the "framework" file: '.self::FRAMEWORK_CSS_FILE);
+
+        // Cleanup
+        //@rmdir(self::ASSETS_DIR);
     }
 
     /**

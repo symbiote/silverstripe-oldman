@@ -1,6 +1,6 @@
 ---
 Name: cloudflare_extensions
 ---
-SiteTree:
+SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Symbiote\Cloudflare\SiteTreeExtension

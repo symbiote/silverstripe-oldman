@@ -2,10 +2,10 @@
 
 namespace Symbiote\Cloudflare;
 
-use BuildTask;
-use Injector;
-use Director;
-use SS_Log;
+use Psr\Log\LoggerInterface;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\BuildTask;
 
 abstract class PurgeTask extends BuildTask
 {
@@ -75,7 +75,7 @@ abstract class PurgeTask extends BuildTask
         $newline = Director::is_cli() ? "\n" : "<br/>";
         echo $message.$newline;
         if ($errorType) {
-            SS_Log::log($message, $errorType);
+            Injector::inst()->get(LoggerInterface::class)->warning($message);
         }
     }
 }

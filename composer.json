@@ -1,7 +1,7 @@
 {
     "name": "silbinarywolf/silverstripe-oldman",
     "description": "A simple cache purging module for Silverstripe.",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe"
     ],
@@ -17,13 +17,13 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
-        "silverstripe/framework": "~3.1",
-        "silverstripe/cms": "~3.1",
+        "php": ">=5.6",
+        "silverstripe/cms": "^4.0",
         "jamesryanbell/cloudflare": "~1.11"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.0"
+        "squizlabs/php_codesniffer": "^3.0",
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": {
@@ -33,7 +33,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "2.0.x-dev"
         },
         "installer-name": "oldman"
     },
