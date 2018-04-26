@@ -10,6 +10,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 use SilverStripe\CMS\Controllers\RootURLController;
+use SilverStripe\Control\Controller;
 //use Symbiote\Multisites\Model\Site;
 
 class CloudflarePurgePageTest extends FunctionalTest
@@ -41,7 +42,7 @@ class CloudflarePurgePageTest extends FunctionalTest
         $this->assertEquals(
             array(
                 $baseUrl,
-                $baseUrl.'/home/',
+                Controller::join_links($baseUrl, '/home/'),
             ),
             $linksBeingCleared,
             'Has Base URL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
