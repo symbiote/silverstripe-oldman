@@ -49,7 +49,7 @@ class Cloudflare
      *
      * @var string
      */
-    const SITE_CLASS = 'Site';
+    const SITE_CLASS = 'Symbiote\Multisites\Model\Site';
 
     /**
      * @var boolean

@@ -2,14 +2,47 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
+use SilverStripe\Control\Director;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
+use SilverStripe\CMS\Controllers\RootURLController;
 
 class CloudflarePurgePageTest extends FunctionalTest
 {
     protected static $disable_themes = true;
+
+    /**
+     * This test ensures that the home page
+     *
+     * @useDatabase
+     */
+    public function testPurgeHomePage()
+    {
+        // NOTE(Jake): 2018-04-26
+        //
+        // This was 'home' at the time of writing and has been for the lifecycle of
+        // SilverStripe 3.X
+        //
+        $homeSlug = RootURLController::config()->default_homepage_link;
+
+        $record = SiteTree::create();
+        $record->URLSegment = $homeSlug;
+        $record->write();
+
+        $baseUrl = Director::baseURL();
+        $homePage = SiteTree::get()->filter(array('URLSegment' => $homeSlug))->first();
+        $linksBeingCleared = getLinksToPurgeByPage($homePage);
+        $this->assertEquals(
+            $linksBeingCleared,
+            array(
+                $baseUrl,
+                $baseUrl.'/home/',
+            ),
+            'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
+        );
+    }
 
     /**
      * This test ensures that config files are setup correctly and that
@@ -41,5 +74,26 @@ class CloudflarePurgePageTest extends FunctionalTest
             $wasPurgePageCalled,
             'Expected "Cloudflare::purgePage" to be called during SiteTree::publishSingle()'
         );
+    }
+
+    /**
+     * Wrapper to expose private method 'getLinksToPurgeByPage'
+     *
+     * @return array
+     */
+    private function getLinksToPurgeByPage(SiteTree $page)
+    {
+        $service = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS);
+        $reflector = new ReflectionObject($service);
+        $method = $reflector->getMethod('getLinksToPurgeByPage');
+        $method->setAccessible(true);
+        $results = $method->invoke($service, $page);
+        // NOTE(Jake): 2018-04-26
+        //
+        // Order does not matter here, so the test will not break if
+        // we assert the order.
+        //
+        sort($results);
+        return $results;
     }
 }
