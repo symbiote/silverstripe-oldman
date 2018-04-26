@@ -3,27 +3,9 @@
 namespace Symbiote\Cloudflare\Tests;
 
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
-
-class CloudflareMock extends Cloudflare {
-    protected $purgePageCalled = false;
-
-    public function purgePage(SiteTree $page)
-    {
-        if (!$this->config()->enabled) {
-            return;
-        }
-        $this->purgePageCalled = true;
-    }
-
-    public function wasPurgePageCalled()
-    {
-        $this->purgePageCalled = true;
-    }
-}
 
 class CloudflarePurgePageTest extends FunctionalTest
 {
@@ -38,14 +20,25 @@ class CloudflarePurgePageTest extends FunctionalTest
     public function testPurgePage()
     {
         Config::inst()->update(Cloudflare::class, 'enabled', true);
-        Config::inst()->update(Injector::class, Cloudflare::class, 'class', CloudflareMock::class);
 
+        $wasPurgePageCalled = false;
         $record = SiteTree::create();
         $record->write();
-        $record->publishSingle();
+        try {
+            $record->publishSingle();
+        } catch (\Cloudflare\Exception\AuthenticationException $e) {
+            // NOTE(Jake): 2018-04-26
+            //
+            // This is expected behaviour. Since we're running `purgePage` with Cloudflare
+            // enabled but with no zone ID / auth key, it's getting an error.
+            //
+            // This at least proves that CloudFlare code was called however.
+            //
+            $wasPurgePageCalled = true;
+        }
 
         $this->assertTrue(
-            Injector::inst()->get(CloudflareMock::class)->wasPurgePageCalled(),
+            $wasPurgePageCalled,
             'Expected "Cloudflare::purgePage" to be called during SiteTree::publishSingle()'
         );
     }
