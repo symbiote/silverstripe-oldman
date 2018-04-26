@@ -16,6 +16,10 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
+env:
+  global:
+    - SS_BASE_URL="https://localhost/"
+
 matrix:
   include:
     - php: 5.6

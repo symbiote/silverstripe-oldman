@@ -22,11 +22,6 @@ class CloudflarePurgePageTest extends FunctionalTest
      */
     public function testPurgeHomePage()
     {
-        define('SS_BASE_URL', "//localhost/");
-        if (!defined('SS_BASE_URL')) {
-            define('SS_BASE_URL', "//localhost/");
-        }
-
         // NOTE(Jake): 2018-04-26
         //
         // This was 'home' at the time of writing and has been for the lifecycle of
@@ -38,13 +33,14 @@ class CloudflarePurgePageTest extends FunctionalTest
         $record->URLSegment = $homeSlug;
         $record->write();
 
+        $baseUrl = Director::baseURL();
         $homePage = SiteTree::get()->filter(array('URLSegment' => $homeSlug))->first();
         $linksBeingCleared = $this->getLinksToPurgeByPage($homePage);
 
         $this->assertEquals(
             array(
-                'http://localhost/',
-                'http://localhost/home/',
+                $baseUrl,
+                $baseUrl.'/home/',
             ),
             $linksBeingCleared,
             'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
