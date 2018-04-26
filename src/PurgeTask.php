@@ -7,11 +7,18 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 
-abstract class PurgeTask extends BuildTask
+//
+// NOTE(Jake): 2018-04-26
+//
+// We changed this from a class extending BuildTask to a trait as
+// any classes that extended this abstract class wouldn't appear in
+// the dev/tasks list.
+//
+trait PurgeTask
 {
     abstract protected function callPurgeFunction(Cloudflare $client);
 
-    public function run($request = null)
+    public function endRun($request)
     {
         $client = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS);
         if (!$client->config()->enabled) {
@@ -40,9 +47,9 @@ abstract class PurgeTask extends BuildTask
 
         $successes = $result->getSuccesses();
         if ($successes) {
-            $this->log('Successes:', E_USER_WARNING);
+            $this->log('Successes:');
             foreach ($successes as $success) {
-                $this->log($success, E_USER_WARNING);
+                $this->log($success);
             }
         }
 
@@ -52,9 +59,9 @@ abstract class PurgeTask extends BuildTask
             $status = 'PURGE ERRORS';
             if ($errors) {
                 echo Director::is_cli() ? "\n" : '<br/>';
-                $this->log('Error(s):', E_USER_WARNING);
+                $this->log('Error(s):');
                 foreach ($errors as $error) {
-                    $this->log($error, E_USER_WARNING);
+                    $this->log($error);
                 }
             }
         }
@@ -63,19 +70,21 @@ abstract class PurgeTask extends BuildTask
         // ie. this is for purge everything.
         echo Director::is_cli() ? "\n" : '<br/>';
         if (!$successes && !$errors) {
-            $this->log($status.'.', E_USER_WARNING);
+            $this->log($status.'.');
         } else {
-            $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)', E_USER_WARNING);
+            $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)');
         }
         $this->log('Time taken: '.$timeTakenInSeconds.' seconds.');
     }
 
-    protected function log($message, $errorType = null)
+    public function run($request)
+    {
+        $this->endRun($request);
+    }
+
+    protected function log($message)
     {
         $newline = Director::is_cli() ? "\n" : "<br/>";
         echo $message.$newline;
-        if ($errorType) {
-            Injector::inst()->get(LoggerInterface::class)->warning($message);
-        }
     }
 }

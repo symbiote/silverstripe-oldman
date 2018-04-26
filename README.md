@@ -19,7 +19,7 @@ composer require silbinarywolf/silverstripe-oldman:~1.0
 
 **[SilverStripe 4.X](https://github.com/silbinarywolf/silverstripe-oldman/tree/master)**
 ```
-composer require silbinarywolf/silverstripe-oldman:~2.0
+composer require silbinarywolf/silverstripe-oldman:~2.1
 ```
 
 ## Requirements

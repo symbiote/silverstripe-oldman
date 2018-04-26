@@ -2,8 +2,10 @@
 
 namespace Symbiote\Cloudflare;
 
-class PurgeURLTask extends PurgeTask
+class PurgeURLTask extends \SilverStripe\Dev\BuildTask
 {
+    use PurgeTask;
+
     protected $title = 'Cloudflare Purge: URL';
 
     protected $description = 'Purges a single or multiple URLs, with an absolute or relative URL (ie. url="admin/,Security/" or url="http://myproductionsite.com/admin, http://myproductionsite.com/Security")';
@@ -29,7 +31,7 @@ class PurgeURLTask extends PurgeTask
         }
         $this->param_url = $urlList;
 
-        return parent::run($request);
+        return $this->endRun($request);
     }
 
     public function callPurgeFunction(Cloudflare $client)
