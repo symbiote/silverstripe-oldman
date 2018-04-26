@@ -78,9 +78,8 @@ class CloudflarePurgePageTest extends FunctionalTest
         $baseUrl = rtrim(SS_BASE_URL, '/');
         $this->assertEquals(
             array(
-                '',
-                $baseUrl,
-                $baseUrl.'/',
+                $baseUrl.'/cloudflare-test-page',
+                $baseUrl.'/cloudflare-test-page/',
             ),
             $linksBeingCleared,
             'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /'
