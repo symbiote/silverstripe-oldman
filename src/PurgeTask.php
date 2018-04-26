@@ -47,9 +47,9 @@ trait PurgeTask
 
         $successes = $result->getSuccesses();
         if ($successes) {
-            $this->log('Successes:', E_USER_WARNING);
+            $this->log('Successes:');
             foreach ($successes as $success) {
-                $this->log($success, E_USER_WARNING);
+                $this->log($success);
             }
         }
 
@@ -59,9 +59,9 @@ trait PurgeTask
             $status = 'PURGE ERRORS';
             if ($errors) {
                 echo Director::is_cli() ? "\n" : '<br/>';
-                $this->log('Error(s):', E_USER_WARNING);
+                $this->log('Error(s):');
                 foreach ($errors as $error) {
-                    $this->log($error, E_USER_WARNING);
+                    $this->log($error);
                 }
             }
         }
@@ -70,9 +70,9 @@ trait PurgeTask
         // ie. this is for purge everything.
         echo Director::is_cli() ? "\n" : '<br/>';
         if (!$successes && !$errors) {
-            $this->log($status.'.', E_USER_WARNING);
+            $this->log($status.'.');
         } else {
-            $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)', E_USER_WARNING);
+            $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)');
         }
         $this->log('Time taken: '.$timeTakenInSeconds.' seconds.');
     }
@@ -82,12 +82,9 @@ trait PurgeTask
         $this->endRun($request);
     }
 
-    protected function log($message, $errorType = null)
+    protected function log($message)
     {
         $newline = Director::is_cli() ? "\n" : "<br/>";
         echo $message.$newline;
-        if ($errorType) {
-            Injector::inst()->get(LoggerInterface::class)->warning($message);
-        }
     }
 }
