@@ -7,11 +7,18 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 
-abstract class PurgeTask extends BuildTask
+//
+// NOTE(Jake): 2018-04-26
+//
+// We changed this from a class extending BuildTask to a trait as
+// any classes that extended this abstract class wouldn't appear in
+// the dev/tasks list.
+//
+trait PurgeTask
 {
     abstract protected function callPurgeFunction(Cloudflare $client);
 
-    public function run($request = null)
+    public function endRun($request)
     {
         $client = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS);
         if (!$client->config()->enabled) {
@@ -68,6 +75,11 @@ abstract class PurgeTask extends BuildTask
             $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)', E_USER_WARNING);
         }
         $this->log('Time taken: '.$timeTakenInSeconds.' seconds.');
+    }
+
+    public function run($request)
+    {
+        $this->endRun($request);
     }
 
     protected function log($message, $errorType = null)

@@ -2,6 +2,7 @@
 
 namespace Symbiote\Cloudflare;
 
+use Exception;
 use Symbiote\Multisites\Model\Site;
 use Cloudflare\Api;
 use Cloudflare\Zone\Cache;
@@ -133,10 +134,7 @@ class Cloudflare
             return null;
         }
         $files = $this->getLinksToPurgeByPage($page);
-        $cache = new Cache($this->client);
-        $response = $cache->purge_files($this->getZoneIdentifier(), $files);
-        $result = new CloudflareResult($files, $response->errors);
-        return $result;
+        return $this->purgeFiles($files);
     }
 
     /**
@@ -149,7 +147,6 @@ class Cloudflare
         }
         $cache = new Cache($this->client);
         $response = $cache->purge($this->getZoneIdentifier(), true);
-
         $result = new CloudflareResult(array(), $response->errors);
         return $result;
     }
@@ -214,11 +211,7 @@ class Cloudflare
             $urlsToPurge[] = $absoluteOrRelativeURL;
         }
 
-        $cache = new Cache($this->client);
-        $response = $cache->purge_files($this->getZoneIdentifier(), $urlsToPurge);
-
-        $result = new CloudflareResult($urlsToPurge, $response->errors);
-        return $result;
+        return $this->purgeFiles($urlsToPurge);
     }
 
     /**
@@ -321,5 +314,30 @@ class Cloudflare
             $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());
         }
         return $files;
+    }
+
+    /**
+     * @param string[] $filesToPurge
+     * @var CloudflareResult
+     */
+    private function purgeFiles(array $filesToPurge)
+    {
+        $cache = new Cache($this->client);
+        $response = $cache->purge_files($this->getZoneIdentifier(), $filesToPurge);
+        $errors = [];
+        if (!$response->success) {
+            if (isset($response->errors)) {
+                $errors = $response->errors;
+            } else {
+                throw new \Exception($response->error);
+                //if (isset($response->error)) {
+                //    $error = new \stdClass;
+                //    $error->message = $response->error;
+                //    $errors[] = $error;
+                //}
+            }
+        }
+        $result = new CloudflareResult($filesToPurge, $errors);
+        return $result;
     }
 }
