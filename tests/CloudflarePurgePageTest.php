@@ -22,9 +22,9 @@ class CloudflarePurgePageTest extends FunctionalTest
      */
     public function testPurgeHomePage()
     {
-        if (!isset($_SERVER['REQUEST_URI']) ||
-            !$_SERVER['REQUEST_URI']) {
-            $_SERVER['REQUEST_URI'] = 'http://localhost/';
+        define('SS_BASE_URL', "//localhost/");
+        if (!defined('SS_BASE_URL')) {
+            define('SS_BASE_URL', "//localhost/");
         }
 
         // NOTE(Jake): 2018-04-26
