@@ -28,7 +28,8 @@ class SiteTreeExtension extends DataExtension
         $this->addInformationToHeader($cloudflareResult);
     }
 
-    private function addInformationToHeader(CloudflareResult $cloudflareResult = null) {
+    private function addInformationToHeader(CloudflareResult $cloudflareResult = null)
+    {
         if (!Controller::has_curr()) {
             return false;
         }

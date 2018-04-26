@@ -11,13 +11,15 @@ use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 use SilverStripe\CMS\Controllers\RootURLController;
 use SilverStripe\Control\Controller;
+
 //use Symbiote\Multisites\Model\Site;
 
 class CloudflarePurgePageTest extends FunctionalTest
 {
     protected static $disable_themes = true;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         if (!defined('SS_BASE_URL')) {
             define('SS_BASE_URL', 'https://localhost/');
