@@ -39,14 +39,25 @@ class CloudflarePurgePageTest extends FunctionalTest
         $homePage = SiteTree::get()->filter(array('URLSegment' => $homeSlug))->first();
         $linksBeingCleared = $this->getLinksToPurgeByPage($homePage);
 
-        $this->assertEquals(
-            array(
-                $baseUrl,
-                Controller::join_links($baseUrl, '/home/'),
-            ),
-            $linksBeingCleared,
-            'Has Base URL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
-        );
+        if ($baseUrl) {
+            $this->assertEquals(
+                array(
+                    $baseUrl,
+                    Controller::join_links($baseUrl, '/home/'),
+                ),
+                $linksBeingCleared,
+                'Not-Blank Director::absoluteBaseURL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
+            );
+        } else {
+            $this->assertEquals(
+                array(
+                    '',
+                    'https://localhost/',
+                ),
+                $linksBeingCleared,
+                'Blank Director::absoluteBaseURL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
+            );
+        }
     }
 
     /**
