@@ -28,17 +28,25 @@ matrix:
       env:
         - DB=MYSQL
         - RECIPE_VERSION=1.1.x-dev
+        - MULTISITES_VERSION=5.0.2
     - php: 7.1
       env:
         - DB=MYSQL
         - PHPSTAN_TEST=1
         - RECIPE_VERSION=1.2.x-dev
+    - php: 7.2
+      env:
+        - DB=MYSQL
+        - PHPSTAN_TEST=1
+        - RECIPE_VERSION=1.2.x-dev
+        - MULTISITES_VERSION=master
 
 before_script:
   - phpenv rehash
   - phpenv config-rm xdebug.ini
   - composer validate
   - composer require --no-update silverstripe/recipe-cms:$RECIPE_VERSION
+  - if [[ $MULTISITES_VERSION ]]; then composer require --no-update symbiote/silverstripe-multisites:5.0.2; fi
   - if [[ $PHPSTAN_TEST ]]; then composer require phpstan/phpstan-shim:0.9.2; fi
   - composer install --prefer-dist --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
 
