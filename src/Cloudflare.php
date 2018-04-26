@@ -286,7 +286,11 @@ class Cloudflare
                 $pageLink = $page->AbsoluteLink();
             }
         }
+
+        // CloudFlare requires both one with and without a forward-slash.
+        $pageLink = rtrim($pageLink, '/');
         $files[] = $pageLink;
+        $files[] = $pageLink.'/';
 
         // If /home/ for HomePage, also add "/" to be cleared.
         if ($this->isHomePage($page)) {
