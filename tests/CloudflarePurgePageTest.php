@@ -42,11 +42,11 @@ class CloudflarePurgePageTest extends FunctionalTest
         $linksBeingCleared = $this->getLinksToPurgeByPage($homePage);
 
         $this->assertEquals(
-            $linksBeingCleared,
             array(
                 'http://localhost/',
                 'http://localhost/home/',
             ),
+            $linksBeingCleared,
             'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
         );
     }
