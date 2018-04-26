@@ -28,7 +28,8 @@ matrix:
       env:
         - DB=MYSQL
         - RECIPE_VERSION=1.1.x-dev
-        - MULTISITES_VERSION=5.0.2
+        # This doesn't work due to Multisites not being built to be compatible.
+        #- MULTISITES_VERSION=5.0.2 # NOTE: Test at a version we know definitely works.
     - php: 7.1
       env:
         - DB=MYSQL
@@ -39,7 +40,8 @@ matrix:
         - DB=MYSQL
         - PHPSTAN_TEST=1
         - RECIPE_VERSION=1.2.x-dev
-        - MULTISITES_VERSION=master
+        # This doesn't work due to Multisites not being built to be compatible.
+        #- MULTISITES_VERSION=master # NOTE: Test against the tip for regressions. This could cause failures!
 
 before_script:
   - phpenv rehash
