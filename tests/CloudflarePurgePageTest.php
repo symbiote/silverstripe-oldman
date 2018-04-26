@@ -17,8 +17,15 @@ class CloudflarePurgePageTest extends FunctionalTest
 {
     protected static $disable_themes = true;
 
+    public function setUp() {
+        parent::setUp();
+        if (!defined('SS_BASE_URL')) {
+            define('SS_BASE_URL', 'https://localhost/');
+        }
+    }
+
     /**
-     * This test ensures that the home page
+     * This test ensures that the home page will be purged.
      *
      * @useDatabase
      */
@@ -48,27 +55,36 @@ class CloudflarePurgePageTest extends FunctionalTest
                 $baseUrl.'/',
             ),
             $linksBeingCleared,
-            'Not-Blank Director::absoluteBaseURL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
+            'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /'
         );
-        /*if ($baseUrl) {
-            $this->assertEquals(
-                array(
-                    $baseUrl,
-                    Controller::join_links($baseUrl, '/home/'),
-                ),
-                $linksBeingCleared,
-                'Not-Blank Director::absoluteBaseURL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
-            );
-        } else {
-            $this->assertEquals(
-                array(
-                    '',
-                    'https://localhost/',
-                ),
-                $linksBeingCleared,
-                'Blank Director::absoluteBaseURL: Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
-            );
-        }*/
+    }
+
+    /**
+     * This test ensures that a random page will be purged as expected.
+     *
+     * @useDatabase
+     */
+    public function testPurgeRandomPage()
+    {
+        $record = SiteTree::create();
+        $record->Title = "Cloudflare Test Page";
+        $record->URLSegment = 'cloudflare-test-page';
+        $record->write();
+        $record->publishSingle();
+
+        $record = SiteTree::get()->filter(array('URLSegment' => 'cloudflare-test-page'))->first();
+        $linksBeingCleared = $this->getLinksToPurgeByPage($record);
+
+        $baseUrl = rtrim(SS_BASE_URL, '/');
+        $this->assertEquals(
+            array(
+                '',
+                $baseUrl,
+                $baseUrl.'/',
+            ),
+            $linksBeingCleared,
+            'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /'
+        );
     }
 
     /**
