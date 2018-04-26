@@ -11,12 +11,15 @@ class SiteTreeExtension extends DataExtension
     public function onAfterPublish()
     {
         $result = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS)->purgePage($this->owner);
+
         if (Controller::has_curr()) {
-            foreach ($result->getSuccesses() as $success) {
-                var_dump($success); exit;
-            }
+            $urls = $result->getSuccesses();
+            $errors = $result->getErrors();
             $response = Controller::curr()->getResponse();
-            $response->addHeader('Oldman-Cloudflare-Cleared-Links', $time);
+            $response->addHeader('Oldman-Cloudflare-Cleared-Links', implode(",\n", $urls));
+            if ($errors) {
+                $response->addHeader('Oldman-Cloudflare-Errors', implode(",\n", $errors));
+            }
         }
     }
 
