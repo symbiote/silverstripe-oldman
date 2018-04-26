@@ -272,7 +272,19 @@ class Cloudflare
         if ($baseURL) {
             $pageLink = Controller::join_links($baseURL, $page->Link());
         } else {
-            $pageLink = $page->AbsoluteLink();
+            if (class_exists(self::SITE_CLASS)) {
+                // NOTE(Jake): 2018-04-26
+                //
+                // We do this as the URL returned will not use 'Host' if you are on this
+                // current site, but rather default to your local URL.
+                //
+                // This solves a problem where you might have a frontend server and a backend server
+                // with two different URLs.
+                //
+                $pageLink = Controller::join_links($page->Site()->AbsoluteLink(), $page->Link());
+            } else {
+                $pageLink = $page->AbsoluteLink();
+            }
         }
         $files[] = $pageLink;
 
