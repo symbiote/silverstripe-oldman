@@ -22,6 +22,11 @@ class CloudflarePurgePageTest extends FunctionalTest
      */
     public function testPurgeHomePage()
     {
+        if (!isset($_SERVER['REQUEST_URI']) ||
+            !$_SERVER['REQUEST_URI']) {
+            $_SERVER['REQUEST_URI'] = 'http://localhost/';
+        }
+
         // NOTE(Jake): 2018-04-26
         //
         // This was 'home' at the time of writing and has been for the lifecycle of
@@ -35,6 +40,7 @@ class CloudflarePurgePageTest extends FunctionalTest
 
         $homePage = SiteTree::get()->filter(array('URLSegment' => $homeSlug))->first();
         $linksBeingCleared = $this->getLinksToPurgeByPage($homePage);
+
         $this->assertEquals(
             $linksBeingCleared,
             array(
