@@ -34,7 +34,7 @@ class CloudflarePurgePageTest extends FunctionalTest
         $record->URLSegment = $homeSlug;
         $record->write();
 
-        $baseUrl = Director::baseURL();
+        $baseUrl = Director::absoluteBaseURL();
         $homePage = SiteTree::get()->filter(array('URLSegment' => $homeSlug))->first();
         $linksBeingCleared = $this->getLinksToPurgeByPage($homePage);
 
