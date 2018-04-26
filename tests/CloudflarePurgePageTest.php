@@ -38,8 +38,8 @@ class CloudflarePurgePageTest extends FunctionalTest
         $this->assertEquals(
             $linksBeingCleared,
             array(
-                Director::absoluteURL('/'),
-                Director::absoluteURL('/home/'),
+                'http://localhost/',
+                'http://localhost/home/',
             ),
             'Expected "Cloudflare::purgePage" on a home page record to return both the base url and /home/'
         );
