@@ -2,6 +2,7 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Director;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
