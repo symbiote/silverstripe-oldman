@@ -32,6 +32,8 @@ class CloudflarePurgePageTest extends FunctionalTest
     /**
      * This test ensures that config files are setup correctly and that
      * the `purgePage` function gets called when a SiteTree object is published.
+     *
+     * @useDatabase
      */
     public function testPurgePage()
     {
