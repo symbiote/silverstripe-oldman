@@ -10,6 +10,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
 use SilverStripe\CMS\Controllers\RootURLController;
+//use Symbiote\Multisites\Model\Site;
 
 class CloudflarePurgePageTest extends FunctionalTest
 {
@@ -28,6 +29,7 @@ class CloudflarePurgePageTest extends FunctionalTest
         // SilverStripe 3.X
         //
         $homeSlug = RootURLController::config()->default_homepage_link;
+        Director::config()->default_base_url = 'https://localhost/';
 
         $record = SiteTree::create();
         $record->URLSegment = $homeSlug;
