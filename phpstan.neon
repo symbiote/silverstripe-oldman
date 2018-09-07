@@ -16,4 +16,4 @@ parameters:
         # No SilverStripe support yet
         - '%Call to an undefined method SiteTree::Parent()%'
 #includes:
-#	- ../vendor/silbinarywolf/silverstripe-phpstan/extension.neon
+#	- ../vendor/symbiote/silverstripe-phpstan/extension.neon

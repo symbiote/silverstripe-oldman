@@ -1,5 +1,5 @@
 {
-    "name": "silbinarywolf/silverstripe-oldman",
+    "name": "symbiote/silverstripe-oldman",
     "description": "A simple cache purging module for Silverstripe.",
     "type": "silverstripe-vendormodule",
     "keywords": [
@@ -36,10 +36,13 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.1.x-dev"
+            "dev-master": "3.0.x-dev"
         },
         "installer-name": "oldman"
     },
+	"replace": {
+		"silbinarywolf/silverstripe-oldman": "self.version"
+	},
     "prefer-stable": true,
     "minimum-stability": "dev"
 }

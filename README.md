@@ -1,10 +1,10 @@
 # Old Man
 
-[![Build Status](https://travis-ci.org/silbinarywolf/silverstripe-oldman.svg?branch=master)](https://travis-ci.org/silbinarywolf/silverstripe-oldman)
-[![Latest Stable Version](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/version.svg)](https://github.com/silbinarywolf/silverstripe-oldman/releases)
-[![Latest Unstable Version](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/v/unstable.svg)](https://packagist.org/packages/silbinarywolf/silverstripe-oldman)
-[![Total Downloads](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/downloads.svg)](https://packagist.org/packages/silbinarywolf/silverstripe-oldman)
-[![License](https://poser.pugx.org/silbinarywolf/silverstripe-oldman/license.svg)](https://github.com/silbinarywolf/silverstripe-oldman/blob/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/symbiote/silverstripe-oldman.svg?branch=master)](https://travis-ci.org/symbiote/silverstripe-oldman)
+[![Latest Stable Version](https://poser.pugx.org/symbiote/silverstripe-oldman/version.svg)](https://github.com/symbiote/silverstripe-oldman/releases)
+[![Latest Unstable Version](https://poser.pugx.org/symbiote/silverstripe-oldman/v/unstable.svg)](https://packagist.org/packages/symbiote/silverstripe-oldman)
+[![Total Downloads](https://poser.pugx.org/symbiote/silverstripe-oldman/downloads.svg)](https://packagist.org/packages/symbiote/silverstripe-oldman)
+[![License](https://poser.pugx.org/symbiote/silverstripe-oldman/license.svg)](https://github.com/symbiote/silverstripe-oldman/blob/master/LICENSE.md)
 
 A module to aid in the purging of Cloudflare caches.
 
@@ -12,14 +12,14 @@ A module to aid in the purging of Cloudflare caches.
 
 ## Composer Install
 
-**[SilverStripe 3.X](https://github.com/silbinarywolf/silverstripe-oldman/tree/1)**
+**[SilverStripe 3.X](https://github.com/symbiote/silverstripe-oldman/tree/1)**
 ```
-composer require silbinarywolf/silverstripe-oldman:~1.0
+composer require symbiote/silverstripe-oldman:~1.0
 ```
 
-**[SilverStripe 4.X](https://github.com/silbinarywolf/silverstripe-oldman/tree/master)**
+**[SilverStripe 4.X](https://github.com/symbiote/silverstripe-oldman/tree/master)**
 ```
-composer require silbinarywolf/silverstripe-oldman:~2.1
+composer require symbiote/silverstripe-oldman:~2.1
 ```
 
 ## Requirements
