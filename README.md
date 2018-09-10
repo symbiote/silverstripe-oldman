@@ -19,7 +19,7 @@ composer require symbiote/silverstripe-oldman:~1.0
 
 **[SilverStripe 4.X](https://github.com/symbiote/silverstripe-oldman/tree/master)**
 ```
-composer require symbiote/silverstripe-oldman:~2.1
+composer require symbiote/silverstripe-oldman:~3.0
 ```
 
 ## Requirements
