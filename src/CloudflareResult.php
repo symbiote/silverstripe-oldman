@@ -14,7 +14,7 @@ class CloudflareResult
      */
     protected $errors = array();
 
-    public function __construct(array $files, array $errorRecords)
+    public function __construct(array $files, array $errorRecords = null)
     {
         // Determine what purged files were un-successful.
         $purgedFiles = $files;
