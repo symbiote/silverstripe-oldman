@@ -24,7 +24,7 @@ class SiteTreeExtension extends DataExtension
         if (!Cloudflare::config()->enabled) {
             return;
         }
-        Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS)->purgePage($this->owner);
+        $cloudflareResult = Injector::inst()->get(Cloudflare::CLOUDFLARE_CLASS)->purgePage($this->owner);
         $this->addInformationToHeader($cloudflareResult);
     }
 
