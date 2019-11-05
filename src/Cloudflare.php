@@ -2,7 +2,7 @@
 
 namespace Symbiote\Cloudflare;
 
-use Object;
+use SS_Object;
 use Controller;
 use Director;
 use File;
@@ -13,7 +13,7 @@ use Requirements;
 use Cloudflare\Api;
 use Cloudflare\Zone\Cache;
 
-class Cloudflare extends Object
+class Cloudflare extends SS_Object
 {
     /**
      * Cloudflare can only purge 500 files per request.
