@@ -10,7 +10,7 @@ class PurgeURLTask extends PurgeTask
 
     protected $param_url = array();
 
-    public function run($request)
+    public function run($request = null)
     {
         $url = $request->getVar('purge_url');
         if (!$url) {
