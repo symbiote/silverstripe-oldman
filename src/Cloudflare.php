@@ -296,7 +296,7 @@ class Cloudflare
         if ($this->isHomePage($page)) {
             $files[] = substr($pageLink, 0, (strrpos($pageLink, '/home')));
         }
-        return $files;
+        return array_filter($files);
     }
 
     /**
