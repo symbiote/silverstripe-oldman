@@ -2,15 +2,14 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
-use ReflectionObject;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Control\Director;
+use Cloudflare\API\Endpoints\EndpointException;
+use SilverStripe\CMS\Controllers\RootURLController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
-use SilverStripe\CMS\Controllers\RootURLController;
-use SilverStripe\Control\Controller;
+use ReflectionObject;
 
 //use Symbiote\Multisites\Model\Site;
 
@@ -18,7 +17,7 @@ class CloudflarePurgePageTest extends FunctionalTest
 {
     protected static $disable_themes = true;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!defined('SS_BASE_URL')) {
@@ -96,14 +95,14 @@ class CloudflarePurgePageTest extends FunctionalTest
      */
     public function testPurgePage()
     {
-        Config::inst()->update(Cloudflare::class, 'enabled', true);
+        Config::inst()->set(Cloudflare::class, 'enabled', true);
 
         $wasPurgePageCalled = false;
         $record = SiteTree::create();
         $record->write();
         try {
             $record->publishSingle();
-        } catch (\Cloudflare\Exception\AuthenticationException $e) {
+        } catch (EndpointException $e) {
             // NOTE(Jake): 2018-04-26
             //
             // This is expected behaviour. Since we're running `purgePage` with Cloudflare

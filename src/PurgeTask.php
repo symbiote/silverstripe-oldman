@@ -2,10 +2,8 @@
 
 namespace Symbiote\Cloudflare;
 
-use Psr\Log\LoggerInterface;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Control\Director;
-use SilverStripe\Dev\BuildTask;
+use SilverStripe\Core\Injector\Injector;
 
 //
 // NOTE(Jake): 2018-04-26
@@ -42,17 +40,6 @@ trait PurgeTask
         $result = $this->callPurgeFunction($client);
         $timeTakenInSeconds = number_format(microtime(true) - $startTime, 2, '.', '');
 
-        // Show output
-        $status = 'PURGE SUCCESS';
-
-        $successes = $result->getSuccesses();
-        if ($successes) {
-            $this->log('Successes:');
-            foreach ($successes as $success) {
-                $this->log($success);
-            }
-        }
-
         $errors = $result->getErrors();
 
         if ($errors) {
@@ -69,10 +56,10 @@ trait PurgeTask
         // If no successes or errors, assume success.
         // ie. this is for purge everything.
         echo Director::is_cli() ? "\n" : '<br/>';
-        if (!$successes && !$errors) {
-            $this->log($status.'.');
+        if (!$errors) {
+            $this->log('SUCCESS');
         } else {
-            $this->log($status.'. ('.count($successes).' successes, '.count($errors).' failed)');
+            $this->log($status.'. ('.count($errors).' failed)');
         }
         $this->log('Time taken: '.$timeTakenInSeconds.' seconds.');
     }

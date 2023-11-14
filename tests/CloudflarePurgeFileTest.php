@@ -2,14 +2,12 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
-use ReflectionObject;
-use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\View\Requirements;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\View\Requirements;
 use Symbiote\Cloudflare\Cloudflare;
-use Symbiote\Cloudflare\Filesystem;
+use ReflectionObject;
 
 class CloudflarePurgeFileTest extends FunctionalTest
 {
@@ -22,7 +20,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
      * This is used to determine if the 'framework' folder was scanned
      * for CSS/JS files.
      */
-    const FRAMEWORK_CSS_FILE = 'vendor/silverstripe/framework/src/Dev/Install/client/styles/install.css';
+    const FRAMEWORK_CSS_FILE = 'vendor/silverstripe/framework/client/styles/debug.css';
 
     protected static $disable_themes = true;
 
@@ -105,7 +103,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
      */
     public function testAllowBlacklistedDirectories()
     {
-        Config::inst()->update(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', true);
+        Config::inst()->set(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', true);
         $files = $this->getFilesToPurgeByExtensions(
             array(
             'css',
@@ -113,7 +111,7 @@ class CloudflarePurgeFileTest extends FunctionalTest
             'json',
             )
         );
-        Config::inst()->update(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', false);
+        Config::inst()->set(Cloudflare::FILESYSTEM_CLASS, 'disable_default_blacklist_absolute_pathnames', false);
 
         // If it has a file from the 'framework' module, fail this test as it should be ignored.
         $hasFramework = false;
