@@ -25,9 +25,9 @@ class Cloudflare
     use Configurable;
 
     /**
-     * Cloudflare can only purge 500 files per request.
+     * Cloudflare can only purge 30 files per request.
      */
-    const MAX_PURGE_FILES_PER_REQUEST = 500;
+    const MAX_PURGE_FILES_PER_REQUEST = 30;
 
     /**
      * String representation of this class.
@@ -356,7 +356,7 @@ class Cloudflare
             }
             $fileRecordList = File::get()->filter(
                 array(
-                'Filename:EndsWith' => $fileExtensionsPrefixedWithDot
+                'FileFilename:EndsWith' => $fileExtensionsPrefixedWithDot
                 )
             );
             $files = array_merge($files, $fileRecordList->map('ID', 'Link')->toArray());

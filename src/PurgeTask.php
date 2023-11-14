@@ -57,7 +57,7 @@ trait PurgeTask
         // ie. this is for purge everything.
         echo Director::is_cli() ? "\n" : '<br/>';
         if (!$errors) {
-            $this->log($status.'.');
+            $this->log('SUCCESS');
         } else {
             $this->log($status.'. ('.count($errors).' failed)');
         }
