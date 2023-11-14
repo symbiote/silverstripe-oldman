@@ -2,19 +2,21 @@
 
 namespace Symbiote\Cloudflare;
 
-use Exception;
-use Symbiote\Multisites\Model\Site;
-use Cloudflare\Api;
-use Cloudflare\Zone\Cache;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\CMS\Model\SiteTree;
+use Cloudflare\API\Adapter\Guzzle as Cloudflare_Guzzle;
+use Cloudflare\API\Auth\APIKey as Cloudflare_APIKey;
+use Cloudflare\API\Auth\APIToken as Cloudflare_APIToken;
+use Cloudflare\API\Endpoints\Zones as Cloudflare_Zones;
 use SilverStripe\Assets\File;
-use SilverStripe\Control\Director;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
-use SilverStripe\View\Requirements;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\View\Requirements;
+use Symbiote\Multisites\Model\Site;
+use Exception;
 
 class Cloudflare
 {
@@ -74,6 +76,16 @@ class Cloudflare
     private static $auth_key = '';
 
     /**
+     * API Token
+     *
+     * eg. 24ca61e15fb2aa62a312-12a90f2674f_3451f8
+     *
+     * @var    string
+     * @config
+     */
+    private static $api_token = '';
+
+    /**
      * Zone ID
      *
      * eg. 73a40b2c0c10f468cb658f67b9d46fff
@@ -108,7 +120,7 @@ class Cloudflare
     );
 
     /**
-     * @var \Cloudflare\Api
+     * @var Cloudflare_Zones
      */
     protected $client;
 
@@ -121,7 +133,24 @@ class Cloudflare
     {
         $this->filesystem = Injector::inst()->get(self::FILESYSTEM_CLASS);
         if ($this->config()->enabled) {
-            $this->client = new Api($this->config()->email, $this->config()->auth_key);
+            if ($this->config()->api_token) {
+                $this->client = new Cloudflare_Zones(
+                    new Cloudflare_Guzzle(
+                        new Cloudflare_APIToken(
+                            Injector::inst()->convertServiceProperty($this->config()->api_token)
+                        ),
+                    )
+                );
+            } else {
+                $this->client = new Cloudflare_Zones(
+                    new Cloudflare_Guzzle(
+                        new Cloudflare_APIKey(
+                            Injector::inst()->convertServiceProperty($this->config()->email),
+                            Injector::inst()->convertServiceProperty($this->config()->auth_key)
+                        ),
+                    )
+                );
+            }
         }
     }
 
@@ -145,10 +174,13 @@ class Cloudflare
         if (!$this->client) {
             return null;
         }
-        $cache = new Cache($this->client);
-        $response = $cache->purge($this->getZoneIdentifier(), true);
-        $result = new CloudflareResult(array(), $response->errors);
-        return $result;
+
+        try {
+            $this->client->cachePurgeEverything($this->getZoneIdentifier());
+            return new CloudflareResult([], []);
+        } catch (Exception $e) {
+            return new CloudflareResult([], [$e->getMessage()]);
+        }
     }
 
     /**
@@ -176,11 +208,11 @@ class Cloudflare
     public function purgeCSSAndJavascript()
     {
         return $this->purgeFilesByExtensions(
-            array(
+            [
                 'css',
                 'js',
                 'json',
-            )
+            ]
         );
     }
 
@@ -219,7 +251,7 @@ class Cloudflare
      */
     public function getZoneIdentifier()
     {
-        return $this->config()->zone_id;
+        return Injector::inst()->convertServiceProperty($this->config()->zone_id);
     }
 
     /**
@@ -230,20 +262,20 @@ class Cloudflare
         if (!$this->client) {
             return null;
         }
+
         $files = $this->getFilesToPurgeByExtensions($fileExtensions, false);
 
         // Purge files
-        $cache = new Cache($this->client);
         $zoneIdentifier = $this->getZoneIdentifier();
         $errors = array();
         foreach (array_chunk($files, self::MAX_PURGE_FILES_PER_REQUEST) as $filesChunk) {
-            $response = $cache->purge_files($zoneIdentifier, $filesChunk);
-            if (!$response->success) {
-                $errors = array_merge($errors, $response->errors);
+            try {
+                $this->client->cachePurge($zoneIdentifier, $filesChunk);
+            } catch (Exception $e) {
+                $errors[] = $e->getMessage();
             }
         }
 
-        //
         $result = new CloudflareResult($files, $errors);
         return $result;
     }
@@ -338,21 +370,15 @@ class Cloudflare
      */
     private function purgeFiles(array $filesToPurge)
     {
-        $cache = new Cache($this->client);
-        $response = $cache->purge_files($this->getZoneIdentifier(), $filesToPurge);
         $errors = [];
-        if (!$response->success) {
-            if (isset($response->errors)) {
-                $errors = $response->errors;
-            } else {
-                throw new \Exception($response->error);
-                //if (isset($response->error)) {
-                //    $error = new \stdClass;
-                //    $error->message = $response->error;
-                //    $errors[] = $error;
-                //}
-            }
+        try {
+            $this->client->cachePurge($this->getZoneIdentifier(), $filesToPurge);
+        } catch (Exception $e) {
+            $errors[] = $e->getMessage();
+
+            throw $e;
         }
+
         $result = new CloudflareResult($filesToPurge, $errors);
         return $result;
     }
