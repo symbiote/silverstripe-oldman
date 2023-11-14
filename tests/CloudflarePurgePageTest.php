@@ -2,15 +2,13 @@
 
 namespace Symbiote\Cloudflare\Tests;
 
-use ReflectionObject;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Control\Director;
+use SilverStripe\CMS\Controllers\RootURLController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use Symbiote\Cloudflare\Cloudflare;
-use SilverStripe\CMS\Controllers\RootURLController;
-use SilverStripe\Control\Controller;
+use ReflectionObject;
 
 //use Symbiote\Multisites\Model\Site;
 
@@ -18,7 +16,7 @@ class CloudflarePurgePageTest extends FunctionalTest
 {
     protected static $disable_themes = true;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         if (!defined('SS_BASE_URL')) {
